@@ -1,0 +1,314 @@
+<html>
+  <!--
+TODO:
+  get favicon
+  play different modes
+  joining modes gives increase score
+  can upgrade different modes
+  upgrades below main screen
+  need controls that work with mobile
+  start with intro screen implying there is more than initial level (maybe something like ms pac man cut scene)
+  get game centered in canvas
+  -->
+  <head>
+    <title>Retro Incremental</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 112 112%22><text y=%22.9em%22 font-size=%2290%22>&#x1f579;</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width">
+    <style>
+      :root {
+        --bg: black;
+        --fg: white;
+        --fgd: hsl(0, 0%, 30%);
+        --hl: red;
+        --hld: hsl(0, 76%, 22%);
+        --hl2: #47d147;
+        --font: 'VT323', monospace;
+      }
+      body {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        background: var(--bg);
+        color: var(--fg);
+        text-align: center;
+        font-family: var(--font);
+        font-size: large;
+        letter-spacing: 0.05em;
+      }
+      canvas {
+        background: white;
+      }
+      button {
+        font-family: var(--font);
+        font-size: large;
+        background: var(--hl);
+        color: var(--hld);
+        border: 1px solid var(--hld);
+        padding: 0.25em;
+        width: 4em;
+      }
+      button:focus {
+        outline: none;
+      }
+      button:hover {
+        filter: brightness(1.2);
+      }
+      button:active {
+        background: var(--hl2);
+      }
+      #wrapper {
+      }
+      #header {
+        font-size: 64px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id='header'>Retro Incremental</div>
+    <div id='content'>
+      <div id='wrapper'>
+        <canvas id='cmain' width='512' height='512'></canvas>
+      </div>
+      <div id='UI'>
+        <div id='stats'>
+          Score: 1234
+        </div>
+        <div id='upgrades'>
+          Upgrades: something
+        </div>
+      </div>
+    </div>
+    <script>
+      const sketches = [];
+      class Sketch {
+        constructor(app) {
+          this.canvas = app.canvas;
+          this.ctx = this.canvas.getContext('2d');
+          this.desc = '-';
+          this.mousePoint = app.mousePoint;
+          this.keys = app.keys;
+        }
+
+        load() {
+          this.t = 0;
+        }
+        unload() { }
+        update() { }
+        _update() { 
+          this.t += 0.033;
+          this.update();
+        }
+        draw(ctx, width, height, t, mousePoint) { }
+        _draw() { 
+          this.ctx.save();
+          this.draw(this.ctx, this.canvas.width, this.canvas.height, this.t, this.mousePoint);
+          this.ctx.restore();
+        }
+        rnd(seed) {
+          //return a value in [0,1)
+          const x = Math.sin(seed++) * 10000;
+          return x - Math.floor(x);
+        }
+        pnoise(x, offset) {
+          //return a value in [0, 1)
+          //x is position in 1d noise 
+          //offset selects between unique 1d noise sequences
+          offset = offset|0;
+          const x0 = Math.floor(x);
+          const x1 = x0 + 1;
+          const r0 = this.rnd(x0+offset);
+          const r1 = this.rnd(x1+offset);
+          const dx = x - x0;
+          const rx = (r1 - r0) * dx + r0;
+          return rx;
+        }
+        fnoise(x, config) {
+          //return a value in [0, 1)
+          //x is position in 1d noise
+          //config is array of objects specifying relative amplitude and frequency
+          // as {a, s}.
+          let asum = 0;
+          const r = config.reduce( (acc, c) => {
+            asum += c.a;
+            return acc + c.a * this.pnoise(x * c.s, c.s);
+          }, 0);
+          return r / asum;
+        }
+        lmap(value, inmin, inmax, outmin, outmax) {
+          const inSize = inmax - inmin;
+          const position = (value - inmin) / inSize;
+          const outSize = outmax - outmin;
+          return outmin + outSize * position;
+        }
+      }
+    </script>
+
+    <script src='./sketch10.js'></script>
+    <script>
+     
+      class App {
+        constructor() {
+          this.prompts = ('myth,apocalypse,vampire,revenant,bloodthirsty,villain,' +
+            'celestial,stitches,hypnosis,classic,requiem,fungus,slasher,core,pain,' +
+            'disguise,beast,soul,risk,shadow,cursed,mask,phobia,death,betrayal,' +
+            'arbitrary,mercy,cult,nightmare,symbiotic,halloween').split`,`;
+
+          this.sketches = [];
+          this.paused = false;
+          this.mousePoint = { x: 0, y: 0, u: 0, v: 0 };
+          this.keys = {};
+
+          this.canvas = document.getElementById('cmain');
+          this.canvas.onmousemove = (e) => this.mouseMove(e);
+          document.onkeydown = (e) => this.keydown(e);
+          document.onkeyup = (e) => this.keyup(e);
+
+          this.sketchLoadsRemaining = 32; //31 sketches and the 0th sketch
+
+          this.year = 2021;
+          this.loadDay(10);
+          setInterval(() => app.tick(), 33);
+
+        }
+
+        initCalendar() {
+          const root = document.getElementById('calendar');
+          const divMonth = document.createElement('div');
+          divMonth.id = 'month';
+          divMonth.innerHTML = `<a href="https://www.reddit.com/r/darktober">Darktober</a> ${this.year}`;
+          root.appendChild(divMonth);
+
+          const days = 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday'.split`,`;
+          days.forEach( v => {
+            const dd = document.createElement('div');
+            dd.innerText = v;
+            dd.classList.add('dayDay');
+            root.appendChild(dd);
+          });
+
+          const emptyDays = (new Date(`10/01/${this.year}`)).getDay();
+          for (let i = 0; i < emptyDays; i++) {
+            const ed = document.createElement('div');
+            root.appendChild(ed);
+          }
+          this.calendarElements = [];
+          this.promptSpans = [];
+          this.prompts.forEach( (v, i) => {
+            const pd = document.createElement('div');
+            pd.classList.add('promptDay');
+            const dateSpan = document.createElement('span');
+            dateSpan.innerText = `${i+1}: `;
+            pd.appendChild(dateSpan);
+            const promptSpan = document.createElement('span');
+            promptSpan.id = `prompt${i+1}`;
+            this.promptSpans[i+1] = promptSpan;
+            promptSpan.innerText = 'loading';
+            if (this.sketches[i+1] === undefined) {
+              promptSpan.classList.add('promptDayIncomplete');
+              pd.classList.add('promptDayIncomplete');
+            }
+            this.calendarElements[i+1] = [promptSpan, pd];
+            pd.onclick = () => this.loadDay(i+1);
+            pd.appendChild(promptSpan);
+            root.appendChild(pd);
+          });
+        }
+
+        loadDay(n) {
+
+          this.currentSketch = new Sketch10(this);
+          this.currentSketch.load();
+
+        }
+
+        update() {
+          if (this.currentSketch) {
+            this.currentSketch._update();
+          }
+        }
+
+        draw() {
+          if (this.currentSketch) {
+            this.currentSketch._draw();
+          }
+        }
+
+        tick() {
+          if (!this.paused) {
+            this.update();
+            this.draw();
+          }
+        }
+
+        pause() {
+          this.paused = !this.paused;
+          if (this.paused) {
+            document.getElementById('buttonPause').innerText = 'Run';
+          } else {
+            document.getElementById('buttonPause').innerText = 'Pause';
+          }
+        }
+
+        reset() {
+          if (this.loadedDay !== undefined) {
+            this.loadDay(this.loadedDay);
+          }
+        }
+
+        mouseMove(e) {
+          const rect = this.canvas.getBoundingClientRect();
+          this.mousePoint.x = Math.max(0, e.clientX - rect.left);
+          this.mousePoint.y = Math.max(0, e.clientY - rect.top);
+          this.mousePoint.u = this.mousePoint.x / this.canvas.width;
+          this.mousePoint.v = this.mousePoint.y / this.canvas.height;
+        }
+
+        keydown(e) {
+          this.keys[e.key] = true;
+        }
+
+        keyup(e) {
+          delete this.keys[e.key];
+        }
+
+        loadSketch(n) {
+          const e = document.createElement('script');
+          e.src = `./sketch${n}.js`;
+          e.onload = () => {
+            console.log(`Day ${n} script loaded successfully`);
+            if (n !== 0) {
+              this.calendarElements[n].forEach( v => v.classList.remove('promptDayIncomplete'));
+              const promptText = this.prompts[n-1][0].toUpperCase() + this.prompts[n-1].substr(1);
+              this.promptSpans[n].innerText = promptText;
+            }
+            this.sketchLoadsRemaining--;
+            if (this.sketchLoadsRemaining === 0) {
+              this.loadDay(-1);
+              setInterval(() => app.tick(), 33);
+            }
+          }
+          e.onerror = () => {
+            console.log(`Unable to load day ${n} script`);
+            if (n !== 0) {
+              const promptText = this.prompts[n-1][0].toUpperCase() + this.prompts[n-1].substr(1);
+              this.promptSpans[n].innerText = promptText;
+            }
+            this.sketchLoadsRemaining--;
+            if (this.sketchLoadsRemaining === 0) {
+              this.loadDay(-1);
+              setInterval(() => app.tick(), 33);
+            }
+          }
+          document.body.appendChild(e);
+        }
+      }
+
+      const app = new App();
+      //app.initCalendar();
+
+    </script>
+  </body>
+</html>
