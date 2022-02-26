@@ -1,16 +1,13 @@
 class SceneTitle extends Scene {
   constructor(app) {
     super(app);
-    this.canvas = app.canvas;
-    this.ctx = this.canvas.getContext('2d');
-    this.mousePoint = app.mousePoint;
-    this.keys = app.keys;
+    this.createButton(100, 200, 100, 100, 'START');
   }
 
   update() { 
-    if (this.t > 3) {
-      return 'PacSnakeInvaders';
-    }
+    //if (this.t > 3) {
+    //  return 'PacSnakeInvaders';
+    //}
   }
   draw(ctx, width, height, t, mousePoint) { 
     ctx.fillStyle = 'black';
