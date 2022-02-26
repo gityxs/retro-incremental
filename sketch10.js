@@ -112,7 +112,7 @@ class Sketch10Player {
     const dirCheck = this.dirCheckAdd[this.dir];
     const gridX = Math.floor(newX + dirCheck[0]);
     const gridY = Math.floor(newY + dirCheck[1]);
-    if (this.sketch.board[gridY][gridX] === ' ') {
+    if (this.sketch.board[gridY]?.[gridX] === ' ') {
       this.x = newX;
       this.y = newY;
       if (this.dir === 'l' || this.dir === 'r') {
@@ -127,14 +127,19 @@ class Sketch10Player {
       this.y = Math.round(this.y);
     }
 
-    //wrap around horizontally
-    if (this.x < 0.2 && this.y === 14 && this.dir === 'l') {
+    //wrap around 
+    if (this.x < 0.2 && this.dir === 'l') {
       this.x = 27;
     }
-    if (this.x > 26.8 && this.y === 14 && this.dir === 'r') {
+    if (this.x > 26.8 && this.dir === 'r') {
       this.x = 0;
     }
-    //TODO: add vertical wrap
+    if (this.y < 0.2 && this.dir === 'u') {
+      this.y = 30;
+    }
+    if (this.y > 29.8 && this.dir === 'd') {
+      this.y = 0;
+    }
 
     //if we actually moved, update the trail
     if (this.x !== startx || this.y !== starty) {
@@ -166,7 +171,7 @@ class Sketch10Player {
     if (keys.w) {
       const movex = Math.round(this.x + this.dirMoveMap.u[0]);
       const movey = Math.round(this.y + this.dirMoveMap.u[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'u';
       }
       this.lastKey = idleKey ? this.lastKey : this.sketch.t;
@@ -174,7 +179,7 @@ class Sketch10Player {
     if (keys.s) {
       const movex = Math.round(this.x + this.dirMoveMap.d[0]);
       const movey = Math.round(this.y + this.dirMoveMap.d[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'd';
       }
       this.lastKey = idleKey ? this.lastKey : this.sketch.t;
@@ -182,7 +187,7 @@ class Sketch10Player {
     if (keys.a) {
       const movex = Math.round(this.x + this.dirMoveMap.l[0]);
       const movey = Math.round(this.y + this.dirMoveMap.l[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'l';
       }
       this.lastKey = idleKey ? this.lastKey : this.sketch.t;
@@ -190,7 +195,7 @@ class Sketch10Player {
     if (keys.d) {
       const movex = Math.round(this.x + this.dirMoveMap.r[0]);
       const movey = Math.round(this.y + this.dirMoveMap.r[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'r';
       }
       this.lastKey = idleKey ? this.lastKey : this.sketch.t;
@@ -360,7 +365,7 @@ class Sketch10Ghost {
     const dirCheck = this.dirCheckAdd[this.dir];
     const gridX = Math.floor(newX + dirCheck[0]);
     const gridY = Math.floor(newY + dirCheck[1]);
-    const testCell = this.sketch.board[gridY][gridX];
+    const testCell = this.sketch.board[gridY]?.[gridX];
     //don't move onto the player tail
     let curTail = this.sketch.player.tail;
     let tailHit = false;
@@ -415,28 +420,28 @@ class Sketch10Ghost {
     if (keys.w) {
       const movex = Math.round(this.x + this.dirMoveMap.u[0]);
       const movey = Math.round(this.y + this.dirMoveMap.u[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'u';
       }
     } 
     if (keys.s) {
       const movex = Math.round(this.x + this.dirMoveMap.d[0]);
       const movey = Math.round(this.y + this.dirMoveMap.d[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'd';
       }
     } 
     if (keys.a) {
       const movex = Math.round(this.x + this.dirMoveMap.l[0]);
       const movey = Math.round(this.y + this.dirMoveMap.l[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'l';
       }
     } 
     if (keys.d) {
       const movex = Math.round(this.x + this.dirMoveMap.r[0]);
       const movey = Math.round(this.y + this.dirMoveMap.r[1]);
-      if (this.sketch.board[movey][movex] === ' ') {
+      if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'r';
       }
     }
@@ -493,7 +498,7 @@ class Sketch10Bullet {
     const dirCheck = this.dirCheckAdd.d;
     const gridX = Math.floor(newX + dirCheck[0]);
     const gridY = Math.floor(newY + dirCheck[1]);
-    const testCell = this.sketch.board[gridY][gridX];
+    const testCell = this.sketch.board[gridY]?.[gridX];
     //don't move onto the player tail
     let curTail = this.sketch.player.tail;
     let tailHit = false;
@@ -621,8 +626,9 @@ class Sketch10 extends Sketch {
 
     this.player = new Sketch10Player(this, 13.5, 23, 'l');
 
-    //define the board layout
-    this.board = [
+    //define the board layouts
+    this.boards = {};
+    this.boards.arcade = [
     'R============QW============('.split``,
     'H            ||            H'.split``,
     'H r--9 r---9 || r---9 r--9 H'.split``,
@@ -655,6 +661,42 @@ class Sketch10 extends Sketch {
     'H                          H'.split``,
     'L==========================J'.split``
     ];
+
+    this.boards.empty = [
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``,
+    '                            '.split``
+    ];
+
+    this.board = this.boards.empty;
 
     //add pellets every empty square except those in the list
     this.pellets = [];
