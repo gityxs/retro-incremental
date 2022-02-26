@@ -559,7 +559,7 @@ class Sketch10Pellet {
   }
 }
 
-class Sketch10 extends Sketch {
+class ScenePacSnakeInvaders extends Scene {
   constructor(app) {
     super(app);
     this.scale = 16;
@@ -929,14 +929,15 @@ class Sketch10 extends Sketch {
 
     //draw score
     ctx.fillStyle = 'white';
-    ctx.font = '15px Arial Black';
+    ctx.font = '15px VT323';
     ctx.fillText(`SCORE: ${this.player.score}`, 10, 508);
 
     //draw win msg
     if (this.won) {
-      ctx.font = '90px Arial Black';
+      ctx.font = '90px VT323';
       ctx.fillText('WINNER!', 5, 200);
     }
   }
 }
 
+Scenes.PacSnakeInvaders = ScenePacSnakeInvaders;
