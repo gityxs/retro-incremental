@@ -7,6 +7,7 @@ class App {
 
     this.canvas = document.getElementById('cmain');
     this.canvas.onmousemove = (e) => this.mouseMove(e);
+    this.canvas.onclick = (e) => this.mouseClick(e);
     document.onkeydown = (e) => this.keydown(e);
     document.onkeyup = (e) => this.keyup(e);
 
@@ -27,7 +28,7 @@ class App {
 
   update() {
     if (this.currentScene) {
-      this.nextScene = this.currentScene._update();
+      this.currentScene._update();
     }
   }
 
@@ -43,11 +44,11 @@ class App {
       this.draw();
     }
 
-    if (this.nextScene) {
+    if (this.currentScene.nextScene) {
       this.currentScene.unload();
-      this.currentScene = new this.scenes[this.nextScene](this);
+      this.currentScene = new this.scenes[this.currentScene.nextScene](this);
+      this.currentScene.nextScene = undefined;
       this.currentScene.load();
-      this.nextScene = undefined;
     }
   }
 
@@ -80,6 +81,12 @@ class App {
 
   keyup(e) {
     delete this.keys[e.key];
+  }
+
+  mouseClick(e) {
+    if (this.currentScene) {
+      this.currentScene.click(e);
+    }
   }
 
 }

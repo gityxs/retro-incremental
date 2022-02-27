@@ -1,7 +1,7 @@
 class SceneTitle extends Scene {
   constructor(app) {
     super(app);
-    this.createButton(100, 200, 100, 100, 'START');
+    this.createButton(100, 200, 100, 100, 'START', () => {this.nextScene = 'PacSnakeInvaders'});
   }
 
   update() { 

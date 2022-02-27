@@ -6,6 +6,7 @@ class Scene {
     this.mousePoint = app.mousePoint;
     this.keys = app.keys;
     this.buttons = [];
+    this.nextScene = undefined;
   }
 
   load() {
@@ -15,7 +16,14 @@ class Scene {
   update() { }
   _update() { 
     this.t += 0.033;
-    return this.update();
+
+    if (this.keys.mouse0) {
+      this.buttons.forEach( b => {
+        
+      });
+    }
+
+    this.update();
   }
   draw(ctx, width, height, t, mousePoint) { }
   _draw() { 
@@ -24,6 +32,14 @@ class Scene {
     this.ctx.restore();
 
     this.drawButtons();
+  }
+  click(e) {
+    this.buttons.forEach( b => {
+      if (this.isMouseInRect(b.x, b.y, b.w, b.h)) {
+        //TODO: verify "this" is correct during this callback
+        b.callback();
+      }
+    });
   }
   rnd(seed) {
     //return a value in [0,1)
