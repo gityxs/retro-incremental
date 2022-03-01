@@ -5,13 +5,17 @@ class App {
     this.mousePoint = { x: 0, y: 0, u: 0, v: 0 };
     this.keys = {};
 
+    this.images = new Images();
+    this.images.loadSpriteSheet('./sprites.json');
+
     this.canvas = document.getElementById('cmain');
     this.canvas.onmousemove = (e) => this.mouseMove(e);
     this.canvas.onclick = (e) => this.mouseClick(e);
     document.onkeydown = (e) => this.keydown(e);
     document.onkeyup = (e) => this.keyup(e);
+    this.canvas.ontouchstart
 
-    this.loadScene('Title');
+    this.loadScene('Loading');
     setInterval(() => app.tick(), 33);
 
   }

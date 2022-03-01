@@ -1,5 +1,6 @@
 class Scene {
   constructor(app) {
+    this.app = app;
     this.canvas = app.canvas;
     this.ctx = this.canvas.getContext('2d');
     this.desc = '-';
@@ -16,13 +17,6 @@ class Scene {
   update() { }
   _update() { 
     this.t += 0.033;
-
-    if (this.keys.mouse0) {
-      this.buttons.forEach( b => {
-        
-      });
-    }
-
     this.update();
   }
   draw(ctx, width, height, t, mousePoint) { }
@@ -36,7 +30,6 @@ class Scene {
   click(e) {
     this.buttons.forEach( b => {
       if (this.isMouseInRect(b.x, b.y, b.w, b.h)) {
-        //TODO: verify "this" is correct during this callback
         b.callback();
       }
     });
@@ -112,9 +105,6 @@ class Scene {
       ctx.fillStyle = b.fgColor;
       ctx.fillText(b.text, b.x + b.w / 2, b.y + b.h / 2);
     });
-
-    ctx.fillStyle = 'white';
-    ctx.fillRect(this.mousePoint.x, this.mousePoint.y, 5, 5);
 
     ctx.restore();
   }

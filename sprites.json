@@ -1,0 +1,8 @@
+{
+  "imgUrl": "sprites.png",
+  "spriteList": [
+    {"name": "test", "x": 0, "y": 0, "width": 16, "height": 16},
+    {"name": "invader", "x": 17, "y": 0, "width": 22, "height": 16, "frames": 2}
+
+  ]
+}
