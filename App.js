@@ -15,7 +15,11 @@ class App {
     document.onkeyup = (e) => this.keyup(e);
     this.canvas.ontouchstart
 
-    this.loadScene('Loading');
+    this.state = {};
+    this.state.score = 0;
+
+    //this.loadScene('Loading');
+    this.loadScene('Upgrades');
     setInterval(() => app.tick(), 33);
 
   }

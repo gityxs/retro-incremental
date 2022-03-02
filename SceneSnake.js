@@ -1,6 +1,6 @@
 'use strict';
 
-class Sketch10Tail {
+class SketchSnakeTail {
   constructor(sketch, head) {
     this.sketch = sketch;
     this.head = head;
@@ -17,7 +17,7 @@ class Sketch10Tail {
 
   addTail() {
     if (this.tail === undefined) {
-      this.tail = new Sketch10Tail(this.sketch, this);
+      this.tail = new SketchSnakeTail(this.sketch, this);
     } else {
       this.tail.addTail();
     }
@@ -59,7 +59,7 @@ class Sketch10Tail {
   }
 }
 
-class Sketch10Player {
+class SketchSnakePlayer {
   constructor(sketch, x, y, dir) {
     this.sketch = sketch;
     this.startx = x;
@@ -80,7 +80,6 @@ class Sketch10Player {
       this.trail.push({x: this.x, y: this.y});
     }
     this.dead = false;
-    this.score = 0;
     this.dirAngleMap = {
       l: 0,
       r: Math.PI,
@@ -149,23 +148,6 @@ class Sketch10Player {
 
 
     const keys = {...this.sketch.keys};
-    //handle idle mode
-    const idleTime = 5;
-    const demoTime = 30;
-    let idleKey = false;
-    if (this.sketch.t - this.lastKey > idleTime && !(keys.w || keys.s || keys.a || keys.d)) {
-      //select a random key that isn't just moving backwards
-      keys.w = Math.random() > 0.90 && this.dir !== 'd';
-      keys.s = Math.random() > 0.90 && this.dir !== 'u';
-      keys.a = Math.random() > 0.90 && this.dir !== 'r';
-      keys.d = Math.random() > 0.90 && this.dir !== 'l';
-      idleKey = true;
-    }
-
-    //restart every so often if we're in demo mode
-    if (this.sketch.t - this.lastKey > demoTime) {
-      this.sketch.restart = true;
-    }
 
     //handle key presses
     if (keys.w) {
@@ -174,7 +156,7 @@ class Sketch10Player {
       if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'u';
       }
-      this.lastKey = idleKey ? this.lastKey : this.sketch.t;
+      this.lastKey = this.sketch.t;
     } 
     if (keys.s) {
       const movex = Math.round(this.x + this.dirMoveMap.d[0]);
@@ -182,7 +164,7 @@ class Sketch10Player {
       if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'd';
       }
-      this.lastKey = idleKey ? this.lastKey : this.sketch.t;
+      this.lastKey = this.sketch.t;
     } 
     if (keys.a) {
       const movex = Math.round(this.x + this.dirMoveMap.l[0]);
@@ -190,7 +172,7 @@ class Sketch10Player {
       if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'l';
       }
-      this.lastKey = idleKey ? this.lastKey : this.sketch.t;
+      this.lastKey = this.sketch.t;
     } 
     if (keys.d) {
       const movex = Math.round(this.x + this.dirMoveMap.r[0]);
@@ -198,7 +180,7 @@ class Sketch10Player {
       if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'r';
       }
-      this.lastKey = idleKey ? this.lastKey : this.sketch.t;
+      this.lastKey = this.sketch.t;
     }
 
 
@@ -207,7 +189,7 @@ class Sketch10Player {
       if (p.x === gridX && p.y === gridY && p.eaten === false) {
         p.eaten = true;
         this.eatCount++;
-        this.score += (this.length + 1) * (p.power ? 1000 : 10);
+        app.state.score += (this.length + 1) * (p.power ? 1000 : 10);
         if (p.power) {
           this.powered = true;
           this.powerEnd = this.sketch.t + 10;
@@ -229,7 +211,7 @@ class Sketch10Player {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           g.alive = false;
-          this.score += (this.length + 1) * 10000;
+          app.state.score += (this.length + 1) * 10000;
           this.tailSize += 1;
         } else {
           this.die();
@@ -245,7 +227,7 @@ class Sketch10Player {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           b.alive = false;
-          this.score += (this.length + 1) * 100;
+          app.state.score += (this.length + 1) * 100;
           this.tailSize += 1;
         } else {
           this.die();
@@ -258,7 +240,7 @@ class Sketch10Player {
       this.tailSize -= 1;
       this.length++;
       if (this.tail === undefined) {
-        this.tail = new Sketch10Tail(this.sketch, this);
+        this.tail = new SketchSnakeTail(this.sketch, this);
       } else {
         this.tail.addTail();
       }
@@ -330,7 +312,7 @@ class Sketch10Player {
   }
 }
 
-class Sketch10Ghost {
+class SketchSnakeGhost {
   constructor(sketch, x, y, dir) {
     this.sketch = sketch;
     this.x = x;
@@ -448,30 +430,22 @@ class Sketch10Ghost {
 
     //fire a bullet
     if (Math.random() > 0.99) {
-      this.sketch.bullets.push(new Sketch10Bullet(this.sketch, Math.floor(this.x), this.y));
+      this.sketch.bullets.push(new SketchSnakeBullet(this.sketch, Math.floor(this.x), this.y));
     }
   }
 
   draw(ctx, scale, t) {
-    const poweredFractionRemaining = (this.sketch.player.powerEnd - t) / 10;
-    const flashRate = poweredFractionRemaining > 0.25 ? 0 : 200;
-    const spriteIndex = this.sketch.player.powered ? Math.round(0.5 + 0.5 * Math.cos(poweredFractionRemaining * flashRate)) : 0;
-    const timeIndex = Math.floor(t % 2);
-    const sx = spriteIndex * scale * 1.5;
-    const sy = timeIndex * 16 * 1.5;
-    const swidth = scale * 1.5;
-    const sheight = scale * 1.5;
+    //const poweredFractionRemaining = (this.sketch.player.powerEnd - t) / 10;
+    //const flashRate = poweredFractionRemaining > 0.25 ? 0 : 200;
+    //const spriteIndex = this.sketch.player.powered ? Math.round(0.5 + 0.5 * Math.cos(poweredFractionRemaining * flashRate)) : 0;
     const dx = this.x * scale - 2;
     const dy = this.y * scale - 2;
-    const dwidth = scale * 1.5;
-    const dheight = scale * 1.5;
     const frame = Math.floor(t % 2);
     app.images.drawFrame(ctx, 'invader', frame, dx, dy);
-    //ctx.drawImage(this.sketch.ghostSprite, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
   }
 }
 
-class Sketch10Bullet {
+class SketchSnakeBullet {
   constructor(sketch, x, y) {
     this.sketch = sketch;
     this.x = x;
@@ -541,7 +515,7 @@ class Sketch10Bullet {
 
 }
 
-class Sketch10Pellet {
+class SketchSnakePellet {
   constructor(sketch, x, y, power) {
     this.sketch = sketch;
     this.x = x;
@@ -574,7 +548,7 @@ class SceneSnake extends Scene {
     this.ghosts = [];
     this.bullets = [];
 
-    this.player = new Sketch10Player(this, 13.5, 23, 'l');
+    this.player = new SketchSnakePlayer(this, 13.5, 23, 'l');
 
     //define the board layouts
     this.board = [
@@ -617,9 +591,6 @@ class SceneSnake extends Scene {
   }
 
   update() {
-    if (this.t > this.resetTime || this.restart) {
-      this.load();
-    }
 
     this.bullets.forEach( b => {
       b.update();
@@ -631,16 +602,28 @@ class SceneSnake extends Scene {
       g.update();
     });
 
+    this.pellets = this.pellets.filter( p => !p.eaten );
+
+    if (this.pellets.length === 0) {
+      const newx = 1 + Math.floor(Math.random() * 26);
+      const newy = 1 + Math.floor(Math.random() * 29);
+      this.pellets.push(new SketchSnakePellet(this, newx, newy, false));   
+    }
+
     const maxGhosts = 8;
     if (this.ghosts.length < maxGhosts) {
       if (Math.random() > 0.98) {
-        this.ghosts.push(new Sketch10Ghost(this, 13, 13, 'u'));
+        this.ghosts.push(new SketchSnakeGhost(this, 13, 13, 'u'));
       }
     }
     
     //remove dead objects
     this.ghosts = this.ghosts.filter( g => g.alive );
     this.bullets = this.bullets.filter( b => b.alive );
+
+    if (this.player.dead) {
+      this.nextScene = 'Upgrades';
+    }
 
   }
 
@@ -808,8 +791,8 @@ class SceneSnake extends Scene {
 
     //draw score
     ctx.fillStyle = 'white';
-    ctx.font = '15px VT323';
-    ctx.fillText(`SCORE: ${this.player.score}`, 10, 508);
+    ctx.font = '25px VT323';
+    ctx.fillText(`SCORE: ${app.state.score}`, 10, 508);
   }
 }
 
