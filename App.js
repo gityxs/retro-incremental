@@ -1,7 +1,6 @@
 class App {
   constructor() {
     this.scenes = Scenes;
-    this.paused = false;
     this.mousePoint = { x: 0, y: 0, u: 0, v: 0 };
     this.keys = {};
 
@@ -19,7 +18,8 @@ class App {
     this.state.score = 0;
 
     //this.loadScene('Loading');
-    this.loadScene('Upgrades');
+    //this.loadScene('Upgrades');
+    this.loadScene('Snake');
     setInterval(() => app.tick(), 33);
 
   }
@@ -47,31 +47,14 @@ class App {
   }
 
   tick() {
-    if (!this.paused) {
-      this.update();
-      this.draw();
-    }
+    this.update();
+    this.draw();
 
     if (this.currentScene.nextScene) {
       this.currentScene.unload();
       this.currentScene = new this.scenes[this.currentScene.nextScene](this);
       this.currentScene.nextScene = undefined;
       this.currentScene.load();
-    }
-  }
-
-  pause() {
-    this.paused = !this.paused;
-    if (this.paused) {
-      document.getElementById('buttonPause').innerText = 'Run';
-    } else {
-      document.getElementById('buttonPause').innerText = 'Pause';
-    }
-  }
-
-  reset() {
-    if (this.loadedDay !== undefined) {
-      this.loadDay(this.loadedDay);
     }
   }
 
