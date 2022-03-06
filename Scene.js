@@ -123,12 +123,17 @@ class Scene {
 
     return (mx >= x) && (mx <= x + w) && (my >= y) && (my <= y + h);
   }
-  showDialog(text) {
+  showDialog(text, callback) {
     this.paused = true;
+    this.dialogCallback = callback;
     this.createButton(this.canvas.width/2 - 20, this.canvas.height - 100 - 35, 40, 30, 'OK', () => {
       this.paused = false;
       this.dialog = undefined;
       this.destroyButton('dialog');
+      if (this.dialogCallback) {
+        this.dialogCallback();
+      }
+      this.dialogCallback = undefined;
     },
     {id: 'dialog'});
     this.dialog = this.splitDialog(text);
