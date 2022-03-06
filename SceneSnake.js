@@ -194,7 +194,7 @@ class SketchSnakePlayer {
           this.powered = true;
           this.powerEnd = this.sketch.t + 10;
         }
-        this.tailSize += 0.1;
+        this.tailSize += 0.5;
       }
     });
 
@@ -608,6 +608,9 @@ class SceneSnake extends Scene {
       const newx = 1 + Math.floor(Math.random() * 26);
       const newy = 1 + Math.floor(Math.random() * 29);
       this.pellets.push(new SketchSnakePellet(this, newx, newy, false));   
+      if (this.t > 1) {
+        this.showDialog('Wow! A pellet! Delicious and valuable!');
+      }
     }
 
     const maxGhosts = 8;
@@ -624,7 +627,7 @@ class SceneSnake extends Scene {
     if (this.player.dead) {
       this.nextScene = 'Upgrades';
     }
-
+    
   }
 
   drawBoard(ctx, width, height) {

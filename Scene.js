@@ -8,6 +8,7 @@ class Scene {
     this.keys = app.keys;
     this.buttons = [];
     this.nextScene = undefined;
+    this.paused = false;
   }
 
   load() {
@@ -16,15 +17,20 @@ class Scene {
   unload() { }
   update() { }
   _update() { 
-    this.t += 0.033;
-    this.update();
+    if (!this.paused) {
+      this.t += 0.033;
+      this.update();
+    }
   }
   draw(ctx, width, height, t, mousePoint) { }
   _draw() { 
-    this.ctx.save();
-    this.draw(this.ctx, this.canvas.width, this.canvas.height, this.t, this.mousePoint);
-    this.ctx.restore();
+    if (!this.paused) {
+      this.ctx.save();
+      this.draw(this.ctx, this.canvas.width, this.canvas.height, this.t, this.mousePoint);
+      this.ctx.restore();
+    }
 
+    this.drawDialog();
     this.drawButtons();
   }
   click(e) {
@@ -89,6 +95,9 @@ class Scene {
     this.buttons.push(newButton);
     return newButton;
   }
+  destroyButton(id) {
+    this.buttons = this.buttons.filter( b => b.id !== id );
+  }
   drawButtons() {
     const ctx = this.ctx;
     ctx.save();
@@ -113,6 +122,69 @@ class Scene {
     const my = this.mousePoint.y;
 
     return (mx >= x) && (mx <= x + w) && (my >= y) && (my <= y + h);
+  }
+  showDialog(text) {
+    this.paused = true;
+    this.createButton(this.canvas.width/2 - 20, this.canvas.height - 100 - 35, 40, 30, 'OK', () => {
+      this.paused = false;
+      this.dialog = undefined;
+      this.destroyButton('dialog');
+    },
+    {id: 'dialog'});
+    this.dialog = this.splitDialog(text);
+  }
+  splitDialog(text) {
+    let lines = [];
+
+    if (text.match(/\n/)) {
+      text.split`\n`.forEach( l => {
+        lines = lines.concat(this.splitDialog(l)); 
+      });
+    } else {
+      const maxWidth = 200;
+      this.ctx.font = '20px VT323';
+      let curWidth = 0;
+      let curText = '';
+      text.split` `.forEach( w => {
+        const metrics = this.ctx.measureText(w + ' ');
+        if (curWidth + metrics.width > maxWidth) {
+          lines.push(curText);
+          curWidth = metrics.width;
+          curText = w + ' ';
+        } else {
+          curWidth += metrics.width;
+          curText += w + ' ';
+        }
+      });
+      if (curText.length > 0) {
+        lines.push(curText);
+      }
+    }
+    return lines;
+  }
+  drawDialog() {
+    if (this.dialog === undefined) {return;}
+
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.font = '20px VT323';
+
+    ctx.fillStyle = 'black';
+    ctx.fillRect(100, 100, this.canvas.width - 200 , this.canvas.height - 200);
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(100, 100, this.canvas.width - 200, this.canvas.height - 200);
+    app.images.draw(ctx, 'player', 120, 120);
+
+    ctx.fillStyle = 'white';
+    let curY = 170;
+    let dy = 24;
+    this.dialog.forEach( l => {
+      ctx.fillText(l, 120, curY);
+      curY += dy;
+    });
+
+    ctx.restore();
   }
 }
 const Scenes = {};
