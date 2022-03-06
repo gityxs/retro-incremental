@@ -1,14 +1,10 @@
 class SceneTitle extends Scene {
   constructor(app) {
     super(app);
-    this.createButton(100, 200, 100, 100, 'START', () => {this.nextScene = 'Snake'});
+    this.createButton(100, 200, 100, 100, 'START', () => {this.nextScene = 'Intro'});
   }
 
-  update() { 
-    //if (this.t > 3) {
-    //  return 'PacSnakeInvaders';
-    //}
-  }
+  update() { }
   draw(ctx, width, height, t, mousePoint) { 
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
