@@ -14,14 +14,48 @@ class App {
     document.onkeyup = (e) => this.keyup(e);
     this.canvas.ontouchstart
 
-    this.state = {};
-    this.state.score = 0;
+    this.upgrades = [
+      {text: 'Increase HP', cost: 10, stateVar: 'hp', upgradeType: '*', upgradeVal: 2},
+      {text: 'Increase pellet value', cost: 20, stateVar: 'pValue', upgradeType: '*', upgradeVal: 2},
+      {text: 'Increase starting level', cost: 30, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1}
+    ];
+
+    this.loadFromStorage();
 
     //this.loadScene('Loading');
     //this.loadScene('Upgrades');
     this.loadScene('Snake');
     setInterval(() => app.tick(), 33);
+    setInterval(() => app.saveToStorage(), 5000);
 
+  }
+
+  loadFromStorage() {
+    const rawState = localStorage.getItem('retroIncremental');
+
+    this.state = {
+      score: 0,
+      hp: 1,
+      pValue: 1,
+      startLevel: 1
+    };
+
+    if (rawState !== null) {
+      const loadedState = JSON.parse(rawState);
+      this.state = {...this.state, ...loadedState};
+    }
+
+    this.saveToStorage();
+  }
+
+  saveToStorage() {
+    const saveString = JSON.stringify(this.state);
+    localStorage.setItem('retroIncremental', saveString);
+  }
+
+  reset() {
+    localStorage.removeItem('retroIncremental');
+    window.location.reload();
   }
 
   loadScene(name) {
@@ -77,6 +111,27 @@ class App {
   mouseClick(e) {
     if (this.currentScene) {
       this.currentScene.click(e);
+    }
+  }
+
+  buyUpgrade(index) {
+    const upgrade = this.upgrades[index];
+    if (this.state.score >= upgrade.cost) {
+      this.state.score -= upgrade.cost;
+      upgrade.cost *= 2;
+      switch (upgrade.upgradeType) {
+        case '+': {
+          this.state[upgrade.stateVar] += upgrade.upgradeVal;
+          break;
+        }
+        case '*': {
+          this.state[upgrade.stateVar] *= upgrade.upgradeVal;
+          break;
+        }
+        default: {
+          throw 'INVALID UPGRADE TYPE ' + upgrade.upgradeType;
+        }
+      }
     }
   }
 
