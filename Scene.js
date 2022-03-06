@@ -123,7 +123,8 @@ class Scene {
 
     return (mx >= x) && (mx <= x + w) && (my >= y) && (my <= y + h);
   }
-  showDialog(text, callback) {
+  showDialog(speaker, text, callback) {
+    this.speaker = speaker;
     this.paused = true;
     this.dialogCallback = callback;
     this.createButton(this.canvas.width/2 - 20, this.canvas.height - 100 - 35, 40, 30, 'OK', () => {
@@ -179,7 +180,7 @@ class Scene {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 2;
     ctx.strokeRect(100, 100, this.canvas.width - 200, this.canvas.height - 200);
-    app.images.draw(ctx, 'player', 120, 120);
+    app.images.draw(ctx, 'dialog' + this.speaker, 120, 120);
 
     ctx.fillStyle = 'white';
     let curY = 170;
