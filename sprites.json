@@ -3,6 +3,7 @@
   "spriteList": [
     {"name": "test", "x": 0, "y": 0, "width": 16, "height": 16},
     {"name": "invader", "x": 17, "y": 0, "width": 22, "height": 16, "frames": 2},
+    {"name": "invaderBlue", "x": 17, "y": 17, "width": 22, "height": 16, "frames": 2},
     {"name": "dialogplayer", "x": 63, "y": 0, "width": 20, "height": 24},
     {"name": "dialoginvader", "x": 84, "y": 0, "width": 33, "height": 24}
   ]
