@@ -1,7 +1,7 @@
 class SceneUpgrades extends Scene {
   constructor(app) {
     super(app);
-    this.createButton(100, 0, 50, 30, 'DONE', () => {this.nextScene = 'Snake'});
+    this.createButton(100, 0, 50, 30, 'DONE', () => {this.nextScene = 'Intro'});
     this.app.upgrades.forEach( (u, i) => {
       this.createButton(10, 35 + i * 35, 40, 30, 'Buy', () => {this.app.buyUpgrade(i)});
     });
