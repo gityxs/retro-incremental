@@ -609,7 +609,7 @@ class SceneSnake extends Scene {
       const newy = 1 + Math.floor(Math.random() * 29);
       this.pellets.push(new SketchSnakePellet(this, newx, newy, false));   
       if (this.t > 1) {
-        this.showDialog('Wow! A pellet! Delicious and valuable!');
+        this.showDialog('player', 'Wow! A pellet! Delicious and valuable!');
       }
     }
 
