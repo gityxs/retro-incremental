@@ -3,6 +3,9 @@ class Scene {
     this.app = app;
     this.canvas = app.canvas;
     this.ctx = this.canvas.getContext('2d');
+    this.ctx.webkitImageSmoothingEnabled = false;
+    this.ctx.mozImageSmoothingEnabled = false;
+    this.ctx.imageSmoothingEnabled = false;
     this.desc = '-';
     this.mousePoint = app.mousePoint;
     this.keys = app.keys;
@@ -96,6 +99,7 @@ class Scene {
     return newButton;
   }
   destroyButton(id) {
+    //id would have to be passed in the config parameter when creating
     this.buttons = this.buttons.filter( b => b.id !== id );
   }
   drawButtons() {
@@ -191,6 +195,149 @@ class Scene {
     });
 
     ctx.restore();
+  }
+
+  drawBoard(ctx, width, height) {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    //draw board grid based on board array
+    for (let y = 0; y < this.board.length; y++) {
+      const row = this.board[y];
+      for (let x = 0; x < row.length; x++) {
+        const cell = row[x];
+        switch (cell) {
+          case '=': {
+            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
+            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
+            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
+            ctx.lineTo((x + 1) * this.scale, (y + 0.67) * this.scale);
+            break;;
+          }
+          case 'H': {
+            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
+            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
+            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
+            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
+            break;
+          }
+          case 'R': {
+            ctx.moveTo((x + 0.67) * this.scale, (y + 1) * this.scale);
+            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, Math.PI, 3 * Math.PI / 2);
+            ctx.moveTo((x + 0.33) * this.scale, (y + 1) * this.scale);
+            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.67 * this.scale, Math.PI, 3 * Math.PI / 2);
+            break;
+          }
+          case '(': {
+            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
+            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
+            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
+            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.67 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
+            break;
+          }
+          case 'L': {
+            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
+            ctx.arc((x + 1) * this.scale, y * this.scale, 0.33 * this.scale, Math.PI, Math.PI / 2, true);
+            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
+            ctx.arc((x + 1) * this.scale, y * this.scale, 0.67 * this.scale, Math.PI, Math.PI / 2, true);
+            break;
+          }
+          case 'J': {
+            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
+            ctx.arc(x * this.scale, y * this.scale, 0.33 * this.scale, 0, Math.PI / 2);
+            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
+            ctx.arc(x * this.scale, y * this.scale, 0.67 * this.scale, 0, Math.PI / 2);
+            break;
+          }
+          case 'Q': {
+            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
+            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
+            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
+            ctx.arc((x + 0.18) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
+            break;
+          }
+          case 'W': {
+            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
+            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
+            ctx.moveTo((x + 1) * this.scale, (y + 0.67) * this.scale);
+            ctx.arc((x + 0.82) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, Math.PI, true);
+            break;
+          }
+          case 'A': {
+            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
+            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
+            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
+            ctx.arc((x + 1) * this.scale, (y + 0.18) * this.scale, 0.33 * this.scale, Math.PI, Math.PI / 2, true);
+            break;
+          }
+          case 'S': {
+            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
+            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
+            ctx.moveTo((x + 0.67) * this.scale, (y + 1) * this.scale);
+            ctx.arc((x + 1) * this.scale, (y + 0.82) * this.scale, 0.33 * this.scale, Math.PI, 3 * Math.PI / 2);
+            break;
+          }
+          case 'Z': {
+            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
+            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
+            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
+            ctx.arc(x * this.scale, (y + 0.18) * this.scale, 0.33 * this.scale, 0, Math.PI / 2);
+            break;
+          }
+          case 'X': {
+            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
+            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
+            ctx.moveTo((x + 0.33) * this.scale, (y + 1) * this.scale);
+            ctx.arc(x * this.scale, (y + 0.82) * this.scale, 0.33 * this.scale, 0, 3 * Math.PI / 2, true);
+            break;
+          }
+          case '-': {
+            ctx.moveTo(x * this.scale, (y + 0.5) * this.scale);
+            ctx.lineTo((x + 1) * this.scale, (y + 0.5) * this.scale);
+            break;
+          }
+          case '|': {
+            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
+            ctx.lineTo((x + 0.5) * this.scale, (y + 1) * this.scale);
+            break;
+          }
+          case 'r': {
+            ctx.moveTo((x + 0.5) * this.scale, (y + 1) * this.scale);
+            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.5 * this.scale, Math.PI, 3 * Math.PI / 2);
+            break;
+          }
+          case '9': {
+            ctx.moveTo(x * this.scale, (y + 0.5) * this.scale);
+            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.5 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
+            break;
+          }
+          case 'l': {
+            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
+            ctx.arc((x + 1) * this.scale, y * this.scale, 0.5 * this.scale, Math.PI, Math.PI / 2, true);
+            break;
+          }
+          case 'j': {
+            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
+            ctx.arc(x * this.scale, y * this.scale, 0.5 * this.scale, 0, Math.PI / 2);
+            break;
+          }
+          case 'g': {
+            //this space draws as empty but looks non-empty to prevent player from trying to enter
+            break;
+          }
+          case '#': {
+            //this space draws as empty but looks non-empty to prevent anything from trying to enter
+            break;
+          }
+          default: {
+          }
+        }
+      }
+    }
+    ctx.stroke();
   }
 }
 const Scenes = {};
