@@ -15,16 +15,20 @@ class App {
     this.canvas.ontouchstart
 
     this.upgrades = [
-      {text: 'Increase HP', cost: 10, stateVar: 'hp', upgradeType: '*', upgradeVal: 2},
+      {text: 'Increase starting level', cost: 500, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1, maxVal: 3},
       {text: 'Increase pellet value', cost: 20, stateVar: 'pValue', upgradeType: '*', upgradeVal: 2},
-      {text: 'Increase starting level', cost: 30, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1}
+      {text: 'Increase power pellet chance', cost: 20, stateVar: 'pChance', upgradeType: '*', upgradeVal: 0.5},
+      {text: 'Increase HP', cost: 100, stateVar: 'hp', upgradeType: '+', upgradeVal: 1}
     ];
 
     this.loadFromStorage();
 
-    //this.loadScene('Loading');
+    this.loadScene('Loading');
     //this.loadScene('Upgrades');
-    this.loadScene('Snake');
+    //this.loadScene('Snake');
+    //this.loadScene('Intro');
+    //this.loadScene('Invaders');
+    //this.loadScene('PacSnakeInvaders');
     setInterval(() => app.tick(), 33);
     setInterval(() => app.saveToStorage(), 5000);
 
@@ -37,6 +41,7 @@ class App {
       score: 0,
       hp: 1,
       pValue: 1,
+      pChance: 0.9, //take 1-pChance and multiply it by the default probability of power pellet
       startLevel: 1
     };
 
