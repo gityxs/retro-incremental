@@ -10,8 +10,11 @@ class SceneIntro extends Scene {
   }
 
   update() { 
+    if (this.app.state.startLevel > 1) {
+      this.nextScene = 'Invaders';
+    }
     if (this.t > 10) {
-      this.nextScene = 'Snake';
+      this.nextScene = 'Invaders';
     }
   }
   draw(ctx, width, height, t, mousePoint) { 
@@ -95,7 +98,7 @@ class SceneIntro extends Scene {
     }
 
     if (this.t > 4 && !this.dialog2) {
-      this.showDialog('invader', "This lifeform seems suitable. You're coming with me!", () => this.dialog2 = true);
+      this.showDialog('invader', "This lifeform seems suitable. Please come with me!", () => this.dialog2 = true);
     }
 
   }
