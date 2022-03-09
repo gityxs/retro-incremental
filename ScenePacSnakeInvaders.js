@@ -627,8 +627,7 @@ class ScenePacSnakeInvaders extends Scene {
     this.player = new Sketch10Player(this, 13.5, 23, 'l');
 
     //define the board layouts
-    this.boards = {};
-    this.boards.arcade = [
+    this.board = [
     'R============QW============('.split``,
     'H            ||            H'.split``,
     'H r--9 r---9 || r---9 r--9 H'.split``,
@@ -661,42 +660,6 @@ class ScenePacSnakeInvaders extends Scene {
     'H                          H'.split``,
     'L==========================J'.split``
     ];
-
-    this.boards.empty = [
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``,
-    '                            '.split``
-    ];
-
-    this.board = this.boards.empty;
 
     //add pellets every empty square except those in the list
     this.pellets = [];
@@ -763,149 +726,6 @@ class ScenePacSnakeInvaders extends Scene {
     this.ghosts = this.ghosts.filter( g => g.alive );
     this.bullets = this.bullets.filter( b => b.alive );
 
-  }
-
-  drawBoard(ctx, width, height) {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    //draw board grid based on board array
-    for (let y = 0; y < this.board.length; y++) {
-      const row = this.board[y];
-      for (let x = 0; x < row.length; x++) {
-        const cell = row[x];
-        switch (cell) {
-          case '=': {
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
-            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.67) * this.scale);
-            break;;
-          }
-          case 'H': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            break;
-          }
-          case 'R': {
-            ctx.moveTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, Math.PI, 3 * Math.PI / 2);
-            ctx.moveTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.67 * this.scale, Math.PI, 3 * Math.PI / 2);
-            break;
-          }
-          case '(': {
-            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
-            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.67 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            break;
-          }
-          case 'L': {
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, y * this.scale, 0.33 * this.scale, Math.PI, Math.PI / 2, true);
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, y * this.scale, 0.67 * this.scale, Math.PI, Math.PI / 2, true);
-            break;
-          }
-          case 'J': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, y * this.scale, 0.33 * this.scale, 0, Math.PI / 2);
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, y * this.scale, 0.67 * this.scale, 0, Math.PI / 2);
-            break;
-          }
-          case 'Q': {
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
-            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
-            ctx.arc((x + 0.18) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            break;
-          }
-          case 'W': {
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
-            ctx.moveTo((x + 1) * this.scale, (y + 0.67) * this.scale);
-            ctx.arc((x + 0.82) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, Math.PI, true);
-            break;
-          }
-          case 'A': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 0.18) * this.scale, 0.33 * this.scale, Math.PI, Math.PI / 2, true);
-            break;
-          }
-          case 'S': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 0.82) * this.scale, 0.33 * this.scale, Math.PI, 3 * Math.PI / 2);
-            break;
-          }
-          case 'Z': {
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, (y + 0.18) * this.scale, 0.33 * this.scale, 0, Math.PI / 2);
-            break;
-          }
-          case 'X': {
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.arc(x * this.scale, (y + 0.82) * this.scale, 0.33 * this.scale, 0, 3 * Math.PI / 2, true);
-            break;
-          }
-          case '-': {
-            ctx.moveTo(x * this.scale, (y + 0.5) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.5) * this.scale);
-            break;
-          }
-          case '|': {
-            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.5) * this.scale, (y + 1) * this.scale);
-            break;
-          }
-          case 'r': {
-            ctx.moveTo((x + 0.5) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.5 * this.scale, Math.PI, 3 * Math.PI / 2);
-            break;
-          }
-          case '9': {
-            ctx.moveTo(x * this.scale, (y + 0.5) * this.scale);
-            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.5 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            break;
-          }
-          case 'l': {
-            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, y * this.scale, 0.5 * this.scale, Math.PI, Math.PI / 2, true);
-            break;
-          }
-          case 'j': {
-            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, y * this.scale, 0.5 * this.scale, 0, Math.PI / 2);
-            break;
-          }
-          case 'g': {
-            //this space draws as empty but looks non-empty to prevent player from trying to enter
-            break;
-          }
-          case '#': {
-            //this space draws as empty but looks non-empty to prevent anything from trying to enter
-            break;
-          }
-          default: {
-          }
-        }
-      }
-    }
-    ctx.stroke();
   }
 
   draw(ctx, width, height, t, mousePoint) {
