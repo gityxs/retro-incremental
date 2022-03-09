@@ -76,6 +76,7 @@ class SketchSnakePlayer {
     this.lastKey = 0;
     this.tail = undefined;
     this.trail = [];
+    this.ghostsEaten = 0;
     for (let i = 0; i < 7; i++) {
       this.trail.push({x: this.x, y: this.y});
     }
@@ -153,33 +154,33 @@ class SketchSnakePlayer {
     if (keys.w) {
       const movex = Math.round(this.x + this.dirMoveMap.u[0]);
       const movey = Math.round(this.y + this.dirMoveMap.u[1]);
-      if (this.sketch.board[movey]?.[movex] === ' ') {
+      //if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'u';
-      }
+      //}
       this.lastKey = this.sketch.t;
     } 
     if (keys.s) {
       const movex = Math.round(this.x + this.dirMoveMap.d[0]);
       const movey = Math.round(this.y + this.dirMoveMap.d[1]);
-      if (this.sketch.board[movey]?.[movex] === ' ') {
+      //if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'd';
-      }
+      //}
       this.lastKey = this.sketch.t;
     } 
     if (keys.a) {
       const movex = Math.round(this.x + this.dirMoveMap.l[0]);
       const movey = Math.round(this.y + this.dirMoveMap.l[1]);
-      if (this.sketch.board[movey]?.[movex] === ' ') {
+      //if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'l';
-      }
+      //}
       this.lastKey = this.sketch.t;
     } 
     if (keys.d) {
       const movex = Math.round(this.x + this.dirMoveMap.r[0]);
       const movey = Math.round(this.y + this.dirMoveMap.r[1]);
-      if (this.sketch.board[movey]?.[movex] === ' ') {
+      //if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'r';
-      }
+      //}
       this.lastKey = this.sketch.t;
     }
 
@@ -213,6 +214,11 @@ class SketchSnakePlayer {
           g.alive = false;
           app.state.score += (this.length + 1) * 10000;
           this.tailSize += 1;
+          this.ghostsEaten++;
+          if (this.ghostsEaten > 2) {
+            this.sketch.showDialog('invader', "This can not be happening! Ok. We're going somewhere you'll never survive!",
+              () => this.sketch.nextScene = 'PacSnakeInvaders');
+          }
         } else {
           this.die();
         }
@@ -435,13 +441,14 @@ class SketchSnakeGhost {
   }
 
   draw(ctx, scale, t) {
-    //const poweredFractionRemaining = (this.sketch.player.powerEnd - t) / 10;
-    //const flashRate = poweredFractionRemaining > 0.25 ? 0 : 200;
-    //const spriteIndex = this.sketch.player.powered ? Math.round(0.5 + 0.5 * Math.cos(poweredFractionRemaining * flashRate)) : 0;
+    const poweredFractionRemaining = (this.sketch.player.powerEnd - t) / 10;
+    const flashRate = poweredFractionRemaining > 0.25 ? 0 : 200;
+    const colorIndex = this.sketch.player.powered ? Math.round(0.5 + 0.5 * Math.cos(poweredFractionRemaining * flashRate)) : 0;
     const dx = this.x * scale - 2;
     const dy = this.y * scale - 2;
     const frame = Math.floor(t % 2);
-    app.images.drawFrame(ctx, 'invader', frame, dx, dy);
+    const spriteName = colorIndex === 0 ? 'invader' : 'invaderBlue';
+    app.images.drawFrame(ctx, spriteName, frame, dx, dy);
   }
 }
 
@@ -591,6 +598,9 @@ class SceneSnake extends Scene {
   }
 
   update() {
+    if (this.app.state.startLevel > 3) {
+      this.nextScene = 'PacSnakeInvaders';
+    }
 
     this.bullets.forEach( b => {
       b.update();
@@ -607,7 +617,8 @@ class SceneSnake extends Scene {
     if (this.pellets.length === 0) {
       const newx = 1 + Math.floor(Math.random() * 26);
       const newy = 1 + Math.floor(Math.random() * 29);
-      this.pellets.push(new SketchSnakePellet(this, newx, newy, false));   
+      const power = this.t > 15 && Math.random() > 0.5;
+      this.pellets.push(new SketchSnakePellet(this, newx, newy, power)); 
       if (this.t > 1) {
         this.showDialog('player', 'Wow! A pellet! Delicious and valuable!');
       }
@@ -630,151 +641,8 @@ class SceneSnake extends Scene {
     
   }
 
-  drawBoard(ctx, width, height) {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    //draw board grid based on board array
-    for (let y = 0; y < this.board.length; y++) {
-      const row = this.board[y];
-      for (let x = 0; x < row.length; x++) {
-        const cell = row[x];
-        switch (cell) {
-          case '=': {
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
-            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.67) * this.scale);
-            break;;
-          }
-          case 'H': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            break;
-          }
-          case 'R': {
-            ctx.moveTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, Math.PI, 3 * Math.PI / 2);
-            ctx.moveTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.67 * this.scale, Math.PI, 3 * Math.PI / 2);
-            break;
-          }
-          case '(': {
-            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
-            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.67 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            break;
-          }
-          case 'L': {
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, y * this.scale, 0.33 * this.scale, Math.PI, Math.PI / 2, true);
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, y * this.scale, 0.67 * this.scale, Math.PI, Math.PI / 2, true);
-            break;
-          }
-          case 'J': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, y * this.scale, 0.33 * this.scale, 0, Math.PI / 2);
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, y * this.scale, 0.67 * this.scale, 0, Math.PI / 2);
-            break;
-          }
-          case 'Q': {
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
-            ctx.moveTo(x * this.scale, (y + 0.67) * this.scale);
-            ctx.arc((x + 0.18) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            break;
-          }
-          case 'W': {
-            ctx.moveTo(x * this.scale, (y + 0.33) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.33) * this.scale);
-            ctx.moveTo((x + 1) * this.scale, (y + 0.67) * this.scale);
-            ctx.arc((x + 0.82) * this.scale, (y + 1) * this.scale, 0.33 * this.scale, 3 * Math.PI / 2, Math.PI, true);
-            break;
-          }
-          case 'A': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 0.18) * this.scale, 0.33 * this.scale, Math.PI, Math.PI / 2, true);
-            break;
-          }
-          case 'S': {
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 0.82) * this.scale, 0.33 * this.scale, Math.PI, 3 * Math.PI / 2);
-            break;
-          }
-          case 'Z': {
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.33) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, (y + 0.18) * this.scale, 0.33 * this.scale, 0, Math.PI / 2);
-            break;
-          }
-          case 'X': {
-            ctx.moveTo((x + 0.67) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.67) * this.scale, (y + 1) * this.scale);
-            ctx.moveTo((x + 0.33) * this.scale, (y + 1) * this.scale);
-            ctx.arc(x * this.scale, (y + 0.82) * this.scale, 0.33 * this.scale, 0, 3 * Math.PI / 2, true);
-            break;
-          }
-          case '-': {
-            ctx.moveTo(x * this.scale, (y + 0.5) * this.scale);
-            ctx.lineTo((x + 1) * this.scale, (y + 0.5) * this.scale);
-            break;
-          }
-          case '|': {
-            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
-            ctx.lineTo((x + 0.5) * this.scale, (y + 1) * this.scale);
-            break;
-          }
-          case 'r': {
-            ctx.moveTo((x + 0.5) * this.scale, (y + 1) * this.scale);
-            ctx.arc((x + 1) * this.scale, (y + 1) * this.scale, 0.5 * this.scale, Math.PI, 3 * Math.PI / 2);
-            break;
-          }
-          case '9': {
-            ctx.moveTo(x * this.scale, (y + 0.5) * this.scale);
-            ctx.arc(x * this.scale, (y + 1) * this.scale, 0.5 * this.scale, 3 * Math.PI / 2, 2 * Math.PI);
-            break;
-          }
-          case 'l': {
-            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
-            ctx.arc((x + 1) * this.scale, y * this.scale, 0.5 * this.scale, Math.PI, Math.PI / 2, true);
-            break;
-          }
-          case 'j': {
-            ctx.moveTo((x + 0.5) * this.scale, y * this.scale);
-            ctx.arc(x * this.scale, y * this.scale, 0.5 * this.scale, 0, Math.PI / 2);
-            break;
-          }
-          case 'g': {
-            //this space draws as empty but looks non-empty to prevent player from trying to enter
-            break;
-          }
-          case '#': {
-            //this space draws as empty but looks non-empty to prevent anything from trying to enter
-            break;
-          }
-          default: {
-          }
-        }
-      }
-    }
-    ctx.stroke();
-  }
-
   draw(ctx, width, height, t, mousePoint) {
-    this.drawBoard(ctx, width, height);
+    //this.drawBoard(ctx, width, height);
  
     //set the fill style here to improve performance
     ctx.fillStyle = 'white';
