@@ -643,6 +643,8 @@ class SceneSnake extends Scene {
 
   draw(ctx, width, height, t, mousePoint) {
     //this.drawBoard(ctx, width, height);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, width, height);
  
     //set the fill style here to improve performance
     ctx.fillStyle = 'white';

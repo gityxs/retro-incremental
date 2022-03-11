@@ -160,8 +160,8 @@ class SketchInvadersPlayer {
           this.tailSize += 1;
           this.ghostsEaten++;
 
-          if (this.ghostsEaten >= 2) {
-            this.sketch.showDialog('invader', "This is not what I expected. Try this!", () => this.sketch.nextScene = 'Snake');
+          if (this.sketch.ghosts.length === 1) {
+            this.sketch.showDialog('invader', "This is not going how I had planned! Let's try something new.", () => this.sketch.nextScene = 'Snake');
           }
         } else {
           this.die();
@@ -245,6 +245,7 @@ class SketchInvadersGhost {
     this.y = y;
     this.dir = dir;
     this.alive = true;
+    this.rndMove = false;
     this.dirAngleMap = {
       l: 0,
       r: Math.PI,
@@ -266,7 +267,22 @@ class SketchInvadersGhost {
   }
 
   update() {
+
+    const moveDown = this.sketch.t % 4 < 0.3;
+    const moveRight = (this.sketch.t % 8) - 4 < 0;
+
+    if (!this.rndMove) {
+      this.dir = moveDown ? 'd' : (moveRight ? 'r' : 'l');
+    }
+
+    if (this.y > 28) {
+      this.rndMove = true;
+    }
+
+
+
     const move = this.dirMoveMap[this.dir];
+
     const speed = 0.1;
     const newX = this.x + move[0] * speed;
     const newY = this.y + move[1] * speed;
@@ -354,8 +370,17 @@ class SketchInvadersGhost {
       }
     }
 
+    let bulletThreshold;
+
+    if (this.rndMove) {
+      bulletThreshold = 0.95;
+    } else {
+      bulletThreshold = this.sketch.lmap(this.y, 4, 28, 1, 0.98);
+    }
+
+
     //fire a bullet
-    if (Math.random() > 0.99) {
+    if (Math.random() > bulletThreshold) {
       this.sketch.bullets.push(new SketchInvadersBullet(this.sketch, Math.floor(this.x), this.y));
     }
   }
@@ -514,6 +539,14 @@ class SceneInvaders extends Scene {
 
     this.pellets = [];
 
+    for (let row = 0; row < 5; row++) {
+      for (let col = 0; col < 8; col++) {
+        const gx = 1 + col * 2;
+        const gy = 4 + row * 2;
+        this.ghosts.push(new SketchInvadersGhost(this, gx, gy, 'u'));
+      }
+    }
+
   }
 
   update() {
@@ -534,9 +567,9 @@ class SceneInvaders extends Scene {
 
     this.pellets = this.pellets.filter( p => !p.eaten );
 
-    if (this.pellets.length === 0) {
+    if (this.pellets.length < 10) {
       const newx = 1 + Math.floor(Math.random() * 26);
-      const newy = 1 + Math.floor(Math.random() * 29);
+      const newy = 28 - Math.floor(Math.random() * 4);
       const power = this.t > 15 && Math.random() > 0.5;
       this.pellets.push(new SketchInvadersPellet(this, newx, newy, power));
       if (this.t > 1 && !this.dialog1) {
@@ -544,12 +577,14 @@ class SceneInvaders extends Scene {
       }
     }
 
+    /*
     const maxSimulGhosts = 8;
     if (this.ghosts.length < maxSimulGhosts) {
       if (Math.random() > 0.98) {
         this.ghosts.push(new SketchInvadersGhost(this, 13, 13, 'u'));
       }
     }
+    */
     
     //remove dead objects
     this.ghosts = this.ghosts.filter( g => g.alive );

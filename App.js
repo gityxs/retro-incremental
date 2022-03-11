@@ -23,12 +23,12 @@ class App {
 
     this.loadFromStorage();
 
-    this.loadScene('Loading');
-    //this.loadScene('Upgrades');
-    //this.loadScene('Snake');
+    //this.loadScene('Loading');
     //this.loadScene('Intro');
-    //this.loadScene('Invaders');
+    this.loadScene('Invaders');
+    //this.loadScene('Snake');
     //this.loadScene('PacSnakeInvaders');
+    //this.loadScene('Upgrades');
     setInterval(() => app.tick(), 33);
     setInterval(() => app.saveToStorage(), 5000);
 
