@@ -74,6 +74,8 @@ class Sketch10Player {
     this.tailSize = 0;
     this.length = 0;
     this.lastKey = 0;
+    this.hp = app.state.hp;
+    this.invinTimeout = 0;
     this.tail = undefined;
     this.trail = [];
     for (let i = 0; i < 7; i++) {
@@ -232,7 +234,9 @@ class Sketch10Player {
           this.score += (this.length + 1) * 10000;
           this.tailSize += 1;
         } else {
-          this.die();
+          if (this.sketch.t > this.invinTimeout) {
+            this.die();
+          }
         }
       }
     });
@@ -248,7 +252,9 @@ class Sketch10Player {
           this.score += (this.length + 1) * 100;
           this.tailSize += 1;
         } else {
-          this.die();
+          if (this.sketch.t > this.invinTimeout) {
+            this.die();
+          }
         }
       }
     });
@@ -275,7 +281,9 @@ class Sketch10Player {
       const dy = this.y - curTail.y;
       const d2 = dx * dx + dy * dy;
       if (d2 < 0.7 * 0.7 && !this.powered) {
-        this.die();
+        if (this.sketch.t > this.invinTimeout) {
+          this.die();
+        }
       }
 
       curTail = curTail.tail;
@@ -284,6 +292,10 @@ class Sketch10Player {
   }
 
   die() {
+    this.hp--;
+    this.invinTimeout = this.sketch.t + 0.5;
+    if (this.hp > 0) {return;}
+
     this.x = this.startx;
     this.y = this.starty;
     this.dir = this.startdir;

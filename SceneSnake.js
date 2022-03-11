@@ -74,6 +74,8 @@ class SketchSnakePlayer {
     this.tailSize = 0;
     this.length = 0;
     this.lastKey = 0;
+    this.hp = app.state.hp;
+    this.invinTimeout = 0;
     this.tail = undefined;
     this.trail = [];
     this.ghostsEaten = 0;
@@ -220,7 +222,9 @@ class SketchSnakePlayer {
               () => this.sketch.nextScene = 'PacSnakeInvaders');
           }
         } else {
-          this.die();
+          if (this.sketch.t > this.invinTimeout) {
+            this.die();
+          }
         }
       }
     });
@@ -236,7 +240,9 @@ class SketchSnakePlayer {
           app.state.score += (this.length + 1) * 100;
           this.tailSize += 1;
         } else {
-          this.die();
+          if (this.sketch.t > this.invinTimeout) {
+            this.die();
+          }
         }
       }
     });
@@ -263,7 +269,9 @@ class SketchSnakePlayer {
       const dy = this.y - curTail.y;
       const d2 = dx * dx + dy * dy;
       if (d2 < 0.7 * 0.7 && !this.powered) {
-        this.die();
+        if (this.sketch.t > this.invinTimeout) {
+          this.die();
+        }
       }
 
       curTail = curTail.tail;
@@ -272,6 +280,10 @@ class SketchSnakePlayer {
   }
 
   die() {
+    this.hp--;
+    this.invinTimeout = this.sketch.t + 0.5;
+    if (this.hp > 0) {return;}
+
     this.x = this.startx;
     this.y = this.starty;
     this.dir = this.startdir;
