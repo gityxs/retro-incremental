@@ -15,9 +15,11 @@ class SketchInvadersPlayer {
     this.tailSize = 0;
     this.length = 0;
     this.lastKey = 0;
+    this.hp = app.state.hp;
     this.tail = undefined;
     this.trail = [];
     this.ghostsEaten = 0;
+    this.invinTimeout = 0;
     for (let i = 0; i < 7; i++) {
       this.trail.push({x: this.x, y: this.y});
     }
@@ -131,10 +133,13 @@ class SketchInvadersPlayer {
       if (p.x === gridX && p.y === gridY && p.eaten === false) {
         p.eaten = true;
         this.eatCount++;
-        app.state.score += (this.length + 1) * (p.power ? 100 : 10);
+        app.state.score += (this.length + 1) * (p.power ? 100 : 10) * app.state.pValue;
+        if (!this.dialog1) {
+          this.sketch.showDialog('player', 'Wow! A pellet! Delicious and valuable!', () => this.dialog1 = true);
+        }
         if (p.power) {
           this.powered = true;
-          this.powerEnd = this.sketch.t + 10;
+          this.powerEnd = this.sketch.t + 5;
           if (!this.dialog2) {
             this.sketch.showDialog('player', "Now I can eat the invaders!", () => this.dialog2 = true);
           }
@@ -164,7 +169,9 @@ class SketchInvadersPlayer {
             this.sketch.showDialog('invader', "This is not going how I had planned! Let's try something new.", () => this.sketch.nextScene = 'Snake');
           }
         } else {
-          this.die();
+          if (this.sketch.t > this.invinTimeout) {
+            this.die();
+          }
         }
       }
     });
@@ -180,7 +187,9 @@ class SketchInvadersPlayer {
           app.state.score += (this.length + 1) * 100;
           this.tailSize += 1;
         } else {
-          this.die();
+          if (this.sketch.t > this.invinTimeout) {
+            this.die();
+          }
         }
       }
     });
@@ -192,6 +201,11 @@ class SketchInvadersPlayer {
   }
 
   die() {
+
+    this.hp--;
+    this.invinTimeout = this.sketch.t + 0.5;
+    if (this.hp > 0) {return;}
+
     this.x = this.startx;
     this.y = this.starty;
     this.dir = this.startdir;
@@ -224,11 +238,11 @@ class SketchInvadersPlayer {
     ctx.save();
     ctx.translate((this.x + 0.5) * scale, (this.y + 0.5) * scale);
     ctx.rotate(this.dirAngleMap[this.dir]);
+
     ctx.beginPath();
-    ctx.arc(0, 0, scale * 0.7, Math.PI + curOpen / 2, Math.PI * 2 + Math.PI / 8);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(0, 0, scale * 0.7, - Math.PI / 8, Math.PI - curOpen / 2);
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, scale * 0.8, Math.PI + curOpen / 2, Math.PI - curOpen / 2);
+    ctx.lineTo(0, 0);
     ctx.fill();
     ctx.restore();
 
@@ -275,10 +289,9 @@ class SketchInvadersGhost {
       this.dir = moveDown ? 'd' : (moveRight ? 'r' : 'l');
     }
 
-    if (this.y > 28) {
+    if (this.y > 22) {
       this.rndMove = true;
     }
-
 
 
     const move = this.dirMoveMap[this.dir];
@@ -500,7 +513,7 @@ class SceneInvaders extends Scene {
     this.ghosts = [];
     this.bullets = [];
 
-    this.player = new SketchInvadersPlayer(this, 13.5, 23, 'l');
+    this.player = new SketchInvadersPlayer(this, 13.5, 23, 'r');
 
     //define the board layouts
     this.board = [
@@ -528,8 +541,8 @@ class SceneInvaders extends Scene {
     'H                          H'.split``,
     'H                          H'.split``,
     'H                          H'.split``,
-    'H                          H'.split``,
-    'H                          H'.split``,
+    'H          R==(            H'.split``,
+    'H          H  H            H'.split``,
     'H                          H'.split``,
     'H                          H'.split``,
     'H                          H'.split``,
@@ -567,25 +580,21 @@ class SceneInvaders extends Scene {
 
     this.pellets = this.pellets.filter( p => !p.eaten );
 
-    if (this.pellets.length < 10) {
+    const pprob = 0.01 + 0.5;
+    const pthresh = this.pellets.length === 0 ? 0 : (1 - pprob);
+    const powerprob = 1 / (50 / app.state.pChance);
+    const powerthresh = 1 - powerprob;
+
+
+    if (this.pellets.length < 50 && Math.random() > pthresh) {
       const newx = 1 + Math.floor(Math.random() * 26);
       const newy = 28 - Math.floor(Math.random() * 4);
-      const power = this.t > 15 && Math.random() > 0.5;
-      this.pellets.push(new SketchInvadersPellet(this, newx, newy, power));
-      if (this.t > 1 && !this.dialog1) {
-        this.showDialog('player', 'Wow! A pellet! Delicious and valuable!', () => this.dialog1 = true);
+      const power = this.t > 15 && Math.random() > powerthresh;
+      if (this.board[newy][newx] === ' ' && newx !== 12 && newx !== 13) {
+        this.pellets.push(new SketchInvadersPellet(this, newx, newy, power));
       }
     }
 
-    /*
-    const maxSimulGhosts = 8;
-    if (this.ghosts.length < maxSimulGhosts) {
-      if (Math.random() > 0.98) {
-        this.ghosts.push(new SketchInvadersGhost(this, 13, 13, 'u'));
-      }
-    }
-    */
-    
     //remove dead objects
     this.ghosts = this.ghosts.filter( g => g.alive );
     this.bullets = this.bullets.filter( b => b.alive );
