@@ -217,7 +217,7 @@ class SketchSnakePlayer {
           app.state.score += (this.length + 1) * 10000;
           this.tailSize += 1;
           this.ghostsEaten++;
-          if (this.ghostsEaten > 2) {
+          if (this.ghostsEaten >= 39) {
             this.sketch.showDialog('invader', "This can not be happening! Ok. We're going somewhere you'll never survive!",
               () => this.sketch.nextScene = 'PacSnakeInvaders');
           }
@@ -256,6 +256,9 @@ class SketchSnakePlayer {
       } else {
         this.tail.addTail();
       }
+      if (!this.dialog1) {
+        this.sketch.showDialog('player', 'Something feels weird! What is happening to me?', () => {this.dialog1 = true;});
+      }
     }
 
     if (this.tail !== undefined) {
@@ -280,7 +283,7 @@ class SketchSnakePlayer {
   }
 
   die() {
-    this.hp--;
+    this.hp -= 2;
     this.invinTimeout = this.sketch.t + 0.5;
     if (this.hp > 0) {return;}
 
@@ -560,6 +563,7 @@ class SceneSnake extends Scene {
     this.scale = 16;
     this.width = Math.floor(this.canvas.width / this.scale);
     this.height = this.width;
+    this.ghostSpawnsRemaining = 40;
   }
 
   load() {
@@ -626,20 +630,21 @@ class SceneSnake extends Scene {
 
     this.pellets = this.pellets.filter( p => !p.eaten );
 
+    const powerprob = 1 / (50 / app.state.pChance);
+    const powerthresh = 1 - powerprob;
+
     if (this.pellets.length === 0) {
       const newx = 1 + Math.floor(Math.random() * 26);
       const newy = 1 + Math.floor(Math.random() * 29);
-      const power = this.t > 15 && Math.random() > 0.5;
+      const power = this.t > 15 && Math.random() > powerthresh;
       this.pellets.push(new SketchSnakePellet(this, newx, newy, power)); 
-      if (this.t > 1) {
-        this.showDialog('player', 'Wow! A pellet! Delicious and valuable!');
-      }
     }
 
     const maxGhosts = 8;
-    if (this.ghosts.length < maxGhosts) {
+    if (this.ghosts.length < maxGhosts && this.ghostSpawnsRemaining > 0) {
       if (Math.random() > 0.98) {
         this.ghosts.push(new SketchSnakeGhost(this, 13, 13, 'u'));
+        this.ghostSpawnsRemaining--;
       }
     }
     
