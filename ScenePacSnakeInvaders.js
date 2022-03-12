@@ -467,17 +467,12 @@ class Sketch10Ghost {
   draw(ctx, scale, t) {
     const poweredFractionRemaining = (this.sketch.player.powerEnd - t) / 10;
     const flashRate = poweredFractionRemaining > 0.25 ? 0 : 200;
-    const spriteIndex = this.sketch.player.powered ? Math.round(0.5 + 0.5 * Math.cos(poweredFractionRemaining * flashRate)) : 0;
-    const timeIndex = Math.floor(t % 2);
-    const sx = spriteIndex * scale * 1.5;
-    const sy = timeIndex * 16 * 1.5;
-    const swidth = scale * 1.5;
-    const sheight = scale * 1.5;
+    const colorIndex = this.sketch.player.powered ? Math.round(0.5 + 0.5 * Math.cos(poweredFractionRemaining * flashRate)) : 0;
     const dx = this.x * scale - 2;
     const dy = this.y * scale - 2;
-    const dwidth = scale * 1.5;
-    const dheight = scale * 1.5;
-    ctx.drawImage(this.sketch.ghostSprite, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
+    const frame = Math.floor(t % 2);
+    const spriteName = colorIndex === 0 ? 'invader' : 'invaderBlue';
+    app.images.drawFrame(ctx, spriteName, frame, dx, dy);
   }
 }
 
@@ -577,55 +572,6 @@ class ScenePacSnakeInvaders extends Scene {
     this.scale = 16;
     this.width = Math.floor(this.canvas.width / this.scale);
     this.height = this.width;
-    this.initGhostSprite();
-  }
-
-  initGhostSprite() {
-    //create the sprites on another canvas to reduce drawing time
-    //normalWhite normalBlue
-    //alterWhite  alterBlue
-    this.ghostSprite = document.createElement('canvas');
-    this.ghostSprite.width = this.scale * 1.5 * 2;
-    this.ghostSprite.height = this.scale * 1.5 * 2;
-    const ctx = this.ghostSprite.getContext('2d');
-    //sprite is 11 x 8
-    const sprite = [
-      'X.x.....x.X.....'.split``,
-      '...x...x........'.split``,
-      '..xxxxxxx.......'.split``,
-      '.xx.xxx.xx......'.split``,
-      'xxxxxxxxxxx.....'.split``,
-      'x.xxxxxxx.x.....'.split``,
-      'x.x.....x.x.....'.split``,
-      'X..xx.xx..X.....'.split``,
-      'X.x.....x.X.....'.split``,
-      'x..x...x..x.....'.split``,
-      'x.xxxxxxx.x.....'.split``,
-      'xxx.xxx.xxx.....'.split``,
-      '.xxxxxxxxx......'.split``,
-      '..xxxxxxx.......'.split``,
-      '..x.....x.......'.split``,
-      'Xx.......xX.....'.split``,
-    ];
-    //draw sprite array onto canvas
-    const f = 2;
-    for (let x = 0; x < 16; x++) {
-      for (let y = 0; y < 8; y++) {
-        if (sprite[y][x] === 'x') {
-          ctx.fillStyle = 'white';
-          ctx.fillRect(x * f, y * f, f, f);
-          ctx.fillStyle = 'blue';
-          ctx.fillRect(x * f + this.scale * 1.5, y * f, f, f);
-        }
-        if (sprite[y + 8][x] === 'x') {
-          const dy = 12;
-          ctx.fillStyle = 'white';
-          ctx.fillRect(x * f, (dy + y) * f, f, f);
-          ctx.fillStyle = 'blue';
-          ctx.fillRect(x * f + this.scale * 1.5, (dy + y) * f, f, f);
-        }
-      }
-    }
   }
 
   load() {
