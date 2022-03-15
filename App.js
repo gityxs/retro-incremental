@@ -15,7 +15,7 @@ class App {
     this.canvas.ontouchstart
 
     this.upgrades = [
-      {text: 'Increase starting level', cost: 5000, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1, maxVal: 3},
+      {text: 'Increase starting level', cost: 5000, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1, maxVal: 4},
       {text: 'Increase pellet value', cost: 200, stateVar: 'pValue', upgradeType: '*', upgradeVal: 2},
       {text: 'Increase power pellet chance', cost: 200, stateVar: 'pChance', upgradeType: '*', upgradeVal: 2},
       {text: 'Increase HP', cost: 1000, stateVar: 'hp', upgradeType: '+', upgradeVal: 1}
@@ -29,6 +29,7 @@ class App {
     //this.loadScene('Snake');
     //this.loadScene('PacSnakeInvaders');
     //this.loadScene('Upgrades');
+    //this.loadScene('Ending');
     setInterval(() => app.tick(), 33);
     setInterval(() => app.saveToStorage(), 5000);
 
