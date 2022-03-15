@@ -218,7 +218,7 @@ class SketchSnakePlayer {
           this.tailSize += 1;
           this.ghostsEaten++;
           if (this.ghostsEaten >= 39) {
-            this.sketch.showDialog('invader', "This can not be happening! Ok. We're going somewhere you'll never survive!",
+            this.sketch.showDialog('invader', "This can not be happening! Ok. We're going somewhere you'll never be able to keep up!",
               () => this.sketch.nextScene = 'PacSnakeInvaders');
           }
         } else {
@@ -257,7 +257,7 @@ class SketchSnakePlayer {
         this.tail.addTail();
       }
       if (!this.dialog1) {
-        this.sketch.showDialog('player', 'Something feels weird! What is happening to me?', () => {this.dialog1 = true;});
+        this.sketch.showDialog('player', 'Something feels weird! What is happening to me!?', () => {this.dialog1 = true;});
       }
     }
 
@@ -683,6 +683,22 @@ class SceneSnake extends Scene {
     ctx.fillStyle = 'white';
     ctx.font = '25px VT323';
     ctx.fillText(`SCORE: ${app.state.score}`, 10, 508);
+
+    //draw hp
+    const hp = this.player.hp;
+    const maxhp = app.state.hp;
+    const hpWidth = 100;
+    const hpHeight = 10;
+    const hpPieceWidth = hpWidth / maxhp;
+    const barWidth = Math.max(1, hpPieceWidth - 2);
+    ctx.fillStyle = 'red';
+
+    for (let i = 0; i < maxhp; i++) {
+      const squareHP = maxhp - i;
+      if (hp < squareHP) {continue;}
+      const startx = width - hpWidth - 5 + i * hpPieceWidth;
+      ctx.fillRect(startx, height - hpHeight - 5, barWidth, hpHeight); 
+    }
   }
 }
 

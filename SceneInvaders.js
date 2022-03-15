@@ -141,7 +141,7 @@ class SketchInvadersPlayer {
           this.powered = true;
           this.powerEnd = this.sketch.t + 5;
           if (!this.dialog2) {
-            this.sketch.showDialog('player', "Now I can eat the invaders!", () => this.dialog2 = true);
+            this.sketch.showDialog('player', "Now I can eat the invaders!\nYum!", () => this.dialog2 = true);
           }
         }
         this.tailSize += 0.5;
@@ -628,6 +628,22 @@ class SceneInvaders extends Scene {
     ctx.fillStyle = 'white';
     ctx.font = '25px VT323';
     ctx.fillText(`SCORE: ${app.state.score}`, 10, 508);
+
+    //draw hp
+    const hp = this.player.hp;
+    const maxhp = app.state.hp;
+    const hpWidth = 100;
+    const hpHeight = 10;
+    const hpPieceWidth = hpWidth / maxhp;
+    const barWidth = Math.max(1, hpPieceWidth - 2);
+    ctx.fillStyle = 'red';
+
+    for (let i = 0; i < maxhp; i++) {
+      const squareHP = maxhp - i;
+      if (hp < squareHP) {continue;}
+      const startx = width - hpWidth - 5 + i * hpPieceWidth;
+      ctx.fillRect(startx, height - hpHeight - 5, barWidth, hpHeight); 
+    }
   }
 }
 

@@ -75,6 +75,7 @@ class Sketch10Player {
     this.length = 0;
     this.lastKey = 0;
     this.hp = app.state.hp;
+    this.ghostsEaten = 0;
     this.invinTimeout = 0;
     this.tail = undefined;
     this.trail = [];
@@ -82,7 +83,6 @@ class Sketch10Player {
       this.trail.push({x: this.x, y: this.y});
     }
     this.dead = false;
-    this.score = 0;
     this.dirAngleMap = {
       l: 0,
       r: Math.PI,
@@ -210,8 +210,13 @@ class Sketch10Player {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           g.alive = false;
-          this.score += (this.length + 1) * 100 * app.state.pValue;
+          this.ghostsEaten++;
+          app.state.score += (this.length + 1) * 100 * app.state.pValue;
           this.tailSize += 1;
+          if (this.ghostsEaten >= 39) {
+            this.sketch.showDialog('invader', "Ok. Just stop. We need to talk...",
+              () => this.sketch.nextScene = 'Ending');
+          }
         } else {
           if (this.sketch.t > this.invinTimeout) {
             this.die();
@@ -228,7 +233,7 @@ class Sketch10Player {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           b.alive = false;
-          this.score += (this.length + 1) * 1 * app.state.pValue;
+          app.state.score += (this.length + 1) * 1 * app.state.pValue;
           this.tailSize += 1;
         } else {
           if (this.sketch.t > this.invinTimeout) {
@@ -551,6 +556,7 @@ class ScenePacSnakeInvaders extends Scene {
     this.scale = 16;
     this.width = Math.floor(this.canvas.width / this.scale);
     this.height = this.width;
+    this.ghostSpawnsRemaining = 40;
   }
 
   load() {
@@ -612,7 +618,6 @@ class ScenePacSnakeInvaders extends Scene {
       '1,3', '26,3', '1,23', '26,23'
     ];
 
-    return;
     for (let y = 0; y < this.board.length; y++) {
       const row = this.board[y];
       for (let x = 0; x < row.length; x++) {
@@ -645,9 +650,10 @@ class ScenePacSnakeInvaders extends Scene {
     });
 
     const maxGhosts = 8;
-    if (this.ghosts.length < maxGhosts) {
+    if (this.ghosts.length < maxGhosts && this.ghostSpawnsRemaining > 0) {
       if (Math.random() > 0.98) {
         this.ghosts.push(new Sketch10Ghost(this, 13, 13, 'u'));
+        this.ghostSpawnsRemaining--;
       }
     }
 
@@ -657,7 +663,7 @@ class ScenePacSnakeInvaders extends Scene {
     const powerthresh = 1 - powerprob;
 
 
-    if (this.pellets.length < 50 && Math.random() > pthresh) {
+    if (this.pellets.length < 100 && Math.random() > pthresh) {
       const newx = 1 + Math.floor(Math.random() * 26);
       const newy = 1 + Math.floor(Math.random() * 30);
       const power = this.t > 15 && Math.random() > powerthresh;
@@ -670,6 +676,10 @@ class ScenePacSnakeInvaders extends Scene {
     this.ghosts = this.ghosts.filter( g => g.alive );
     this.bullets = this.bullets.filter( b => b.alive );
     this.pellets = this.pellets.filter( p => !p.eaten );
+
+    if (this.player.dead) {
+      this.nextScene = 'Upgrades';
+    }
 
   }
 
@@ -696,6 +706,24 @@ class ScenePacSnakeInvaders extends Scene {
     ctx.fillStyle = 'white';
     ctx.font = '25px VT323';
     ctx.fillText(`SCORE: ${app.state.score}`, 10, 508);
+
+    //draw hp
+    const hp = this.player.hp;
+    const maxhp = app.state.hp;
+    const hpWidth = 100;
+    const hpHeight = 10;
+    const hpPieceWidth = hpWidth / maxhp;
+    const barWidth = Math.max(1, hpPieceWidth - 2);
+    ctx.fillStyle = 'red';
+
+    for (let i = 0; i < maxhp; i++) {
+      const squareHP = maxhp - i;
+      if (hp < squareHP) {continue;}
+      const startx = width - hpWidth - 5 + i * hpPieceWidth;
+      ctx.fillRect(startx, height - hpHeight - 5, barWidth, hpHeight); 
+    }
+
+
   }
 }
 
