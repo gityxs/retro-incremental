@@ -5,6 +5,7 @@ class SceneTitle extends Scene {
     this.width = Math.floor(this.canvas.width / this.scale);
     this.height = this.width;
     this.createButton(100, 400, 248, 30, 'START', () => {this.nextScene = 'Intro'});
+    this.createButton(385, 455, 40, 20, 'RESET', () => {app.reset();}, {fontSize: '12px'});
   }
 
   load() {
@@ -64,6 +65,7 @@ class SceneTitle extends Scene {
     this.app.images.draw(ctx, 'dialogplayer', px, py, 20 * scale, 24 * scale);
     this.app.images.draw(ctx, 'dialoginvader', ix, iy, 33 * scale, 24 * scale);
   }
+
 }
 
 Scenes.Title = SceneTitle;
