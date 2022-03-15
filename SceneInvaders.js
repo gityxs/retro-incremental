@@ -161,7 +161,7 @@ class SketchInvadersPlayer {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           g.alive = false;
-          app.state.score += (this.length + 1) * 10000;
+          app.state.score += (this.length + 1) * 100 * app.state.pValue;
           this.tailSize += 1;
           this.ghostsEaten++;
 
@@ -184,7 +184,7 @@ class SketchInvadersPlayer {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           b.alive = false;
-          app.state.score += (this.length + 1) * 100;
+          app.state.score += (this.length + 1) * 1 * app.state.pValue;
           this.tailSize += 1;
         } else {
           if (this.sketch.t > this.invinTimeout) {

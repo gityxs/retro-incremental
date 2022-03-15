@@ -192,7 +192,7 @@ class SketchSnakePlayer {
       if (p.x === gridX && p.y === gridY && p.eaten === false) {
         p.eaten = true;
         this.eatCount++;
-        app.state.score += (this.length + 1) * (p.power ? 1000 : 10);
+        app.state.score += (this.length + 1) * (p.power ? 100 : 10) * app.state.pValue;
         if (p.power) {
           this.powered = true;
           this.powerEnd = this.sketch.t + 10;
@@ -214,7 +214,7 @@ class SketchSnakePlayer {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           g.alive = false;
-          app.state.score += (this.length + 1) * 10000;
+          app.state.score += (this.length + 1) * 100 * app.state.pValue;
           this.tailSize += 1;
           this.ghostsEaten++;
           if (this.ghostsEaten >= 39) {
@@ -237,7 +237,7 @@ class SketchSnakePlayer {
       if (d2 < 0.7 * 0.7) {
         if (this.powered) {
           b.alive = false;
-          app.state.score += (this.length + 1) * 100;
+          app.state.score += (this.length + 1) * 1 * app.state.pValue;
           this.tailSize += 1;
         } else {
           if (this.sketch.t > this.invinTimeout) {
