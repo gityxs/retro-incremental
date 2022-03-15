@@ -1,10 +1,3 @@
-/*
-  when you win, the invader tells you he only abducted you because 
-    he loves you and mr retro says he loves him too
-  fade to black
-  game over with retro heart
-*/
-
 class SceneEnding extends Scene {
   constructor(app) {
     super(app);
