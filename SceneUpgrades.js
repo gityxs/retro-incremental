@@ -36,8 +36,13 @@ class SceneUpgrades extends Scene {
     ctx.fillText('Upgrades:', 10, 210);
 
     this.app.upgrades.forEach( (u, i) => {
-      ctx.fillStyle = u.cost <= this.app.state.score ? 'green' : 'red';
-      ctx.fillText(`${u.text}: ${u.cost}`, 58, 253 + i * 35);
+      const upgradeCost = this.app.getUpgradeCost(i);
+      let canBuy = upgradeCost <= this.app.state.score;
+      if (u.stateVar === 'startLevel') {
+        canBuy = canBuy && (this.app.state.startLevel + 1 <= this.app.state.maxStartLevel);
+      }
+      ctx.fillStyle = canBuy ? 'green' : 'red';
+      ctx.fillText(`${u.text}: ${upgradeCost}`, 58, 253 + i * 35);
     });
   }
 }

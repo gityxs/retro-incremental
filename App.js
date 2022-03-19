@@ -15,10 +15,10 @@ class App {
     this.canvas.ontouchstart
 
     this.upgrades = [
-      {text: 'Increase starting level', cost: 5000, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1, maxVal: 4},
-      {text: 'Increase pellet value', cost: 200, stateVar: 'pValue', upgradeType: '*', upgradeVal: 2},
-      {text: 'Increase power pellet chance', cost: 200, stateVar: 'pChance', upgradeType: '*', upgradeVal: 2},
-      {text: 'Increase HP', cost: 1000, stateVar: 'hp', upgradeType: '+', upgradeVal: 1}
+      {text: 'Increase starting level', lvlVar: 'slvl', cost: 5000, costMul: 100, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1, maxVal: 4},
+      {text: 'Increase pellet value', lvlVar: 'pvlvl', cost: 200, costMul: 2, stateVar: 'pValue', upgradeType: '*', upgradeVal: 2},
+      {text: 'Increase power pellet chance', lvlVar: 'pplvl', cost: 200, costMul: 2, stateVar: 'pChance', upgradeType: '*', upgradeVal: 2},
+      {text: 'Increase HP', lvlVar: 'hplvl', cost: 1000, stateVar: 'hp', costMul: 2, upgradeType: '+', upgradeVal: 1}
     ];
 
     this.loadFromStorage();
@@ -43,7 +43,12 @@ class App {
       hp: 1,
       pValue: 1,
       pChance: 1, 
-      startLevel: 1
+      startLevel: 1,
+      maxStartLevel: 1,
+      slvl: 0,
+      pvlvl: 0,
+      pplvl: 0,
+      hplvl: 0
     };
 
     if (rawState !== null) {
@@ -120,11 +125,22 @@ class App {
     }
   }
 
+  getUpgradeCost(index) {
+    const upgrade = this.upgrades[index];
+    const curLvl = this.state[upgrade.lvlVar];
+    return upgrade.cost * Math.pow(upgrade.costMul, curLvl); 
+  }
+
   buyUpgrade(index) {
     const upgrade = this.upgrades[index];
-    if (this.state.score >= upgrade.cost) {
-      this.state.score -= upgrade.cost;
-      upgrade.cost *= 2;
+    const upgradeCost = this.getUpgradeCost(index);
+    let canBuy = upgradeCost <= this.state.score;
+    if (upgrade.stateVar === 'startLevel') {
+      canBuy = canBuy && (this.state.startLevel + 1 <= this.state.maxStartLevel);
+    }
+    if (canBuy) {
+      this.state.score -= upgradeCost;
+      this.state[upgrade.lvlVar]++;
       switch (upgrade.upgradeType) {
         case '+': {
           this.state[upgrade.stateVar] += upgrade.upgradeVal;
