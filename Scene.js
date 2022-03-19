@@ -20,6 +20,11 @@ class Scene {
   unload() { }
   update() { }
   _update() { 
+    if (this.app.keys.Enter) {
+      if (this.buttons.length > 0) {
+        this.buttons[0].callback();
+      }
+    }
     if (!this.paused) {
       this.t += 0.033;
       this.update();
