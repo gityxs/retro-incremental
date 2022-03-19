@@ -153,7 +153,7 @@ class SketchSnakePlayer {
     const keys = {...this.sketch.keys};
 
     //handle key presses
-    if (keys.w) {
+    if (keys.w || keys.ArrowUp) {
       const movex = Math.round(this.x + this.dirMoveMap.u[0]);
       const movey = Math.round(this.y + this.dirMoveMap.u[1]);
       //if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -161,7 +161,7 @@ class SketchSnakePlayer {
       //}
       this.lastKey = this.sketch.t;
     } 
-    if (keys.s) {
+    if (keys.s || keys.ArrowDown) {
       const movex = Math.round(this.x + this.dirMoveMap.d[0]);
       const movey = Math.round(this.y + this.dirMoveMap.d[1]);
       //if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -169,7 +169,7 @@ class SketchSnakePlayer {
       //}
       this.lastKey = this.sketch.t;
     } 
-    if (keys.a) {
+    if (keys.a || keys.ArrowLeft) {
       const movex = Math.round(this.x + this.dirMoveMap.l[0]);
       const movey = Math.round(this.y + this.dirMoveMap.l[1]);
       //if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -177,7 +177,7 @@ class SketchSnakePlayer {
       //}
       this.lastKey = this.sketch.t;
     } 
-    if (keys.d) {
+    if (keys.d || keys.ArrowRight) {
       const movex = Math.round(this.x + this.dirMoveMap.r[0]);
       const movey = Math.round(this.y + this.dirMoveMap.r[1]);
       //if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -217,7 +217,7 @@ class SketchSnakePlayer {
           app.state.score += (this.length + 1) * 100 * app.state.pValue;
           this.tailSize += 1;
           this.ghostsEaten++;
-          if (this.ghostsEaten >= 39) {
+          if (this.ghostsEaten >= 40) {
             this.sketch.showDialog('invader', "This can not be happening! Ok. We're going somewhere you'll never be able to keep up!",
               () => this.sketch.nextScene = 'PacSnakeInvaders');
           }
@@ -544,6 +544,7 @@ class SketchSnakePellet {
     this.y = y;
     this.power = power;
     this.eaten = false;
+    app.state.maxStartLevel = Math.max(app.state.maxStartLevel, 3);
   }
 
   update() {}
@@ -630,7 +631,7 @@ class SceneSnake extends Scene {
 
     this.pellets = this.pellets.filter( p => !p.eaten );
 
-    const powerprob = 1 / (50 / app.state.pChance);
+    const powerprob = 1 / (50000 / app.state.pChance);
     const powerthresh = 1 - powerprob;
 
     if (this.pellets.length === 0) {

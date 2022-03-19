@@ -153,28 +153,28 @@ class Sketch10Player {
     const keys = {...this.sketch.keys};
 
     //handle key presses
-    if (keys.w) {
+    if (keys.w || keys.ArrowUp) {
       const movex = Math.round(this.x + this.dirMoveMap.u[0]);
       const movey = Math.round(this.y + this.dirMoveMap.u[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'u';
       }
     } 
-    if (keys.s) {
+    if (keys.s || keys.ArrowDown) {
       const movex = Math.round(this.x + this.dirMoveMap.d[0]);
       const movey = Math.round(this.y + this.dirMoveMap.d[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'd';
       }
     } 
-    if (keys.a) {
+    if (keys.a || keys.ArrowLeft) {
       const movex = Math.round(this.x + this.dirMoveMap.l[0]);
       const movey = Math.round(this.y + this.dirMoveMap.l[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
         this.dir = 'l';
       }
     } 
-    if (keys.d) {
+    if (keys.d || keys.ArrowRight) {
       const movex = Math.round(this.x + this.dirMoveMap.r[0]);
       const movey = Math.round(this.y + this.dirMoveMap.r[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -557,6 +557,7 @@ class ScenePacSnakeInvaders extends Scene {
     this.width = Math.floor(this.canvas.width / this.scale);
     this.height = this.width;
     this.ghostSpawnsRemaining = 40;
+    app.state.maxStartLevel = Math.max(app.state.maxStartLevel, 4);
   }
 
   load() {
@@ -659,7 +660,7 @@ class ScenePacSnakeInvaders extends Scene {
 
     const pprob = 0.01 + 0.5;
     const pthresh = this.pellets.length === 0 ? 0 : (1 - pprob);
-    const powerprob = 1 / (50 / app.state.pChance);
+    const powerprob = 1 / (5000000000 / app.state.pChance);
     const powerthresh = 1 - powerprob;
 
 

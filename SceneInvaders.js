@@ -94,7 +94,7 @@ class SketchInvadersPlayer {
     const keys = {...this.sketch.keys};
 
     //handle key presses
-    if (keys.w) {
+    if (keys.w || keys.ArrowUp) {
       const movex = Math.round(this.x + this.dirMoveMap.u[0]);
       const movey = Math.round(this.y + this.dirMoveMap.u[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -102,7 +102,7 @@ class SketchInvadersPlayer {
       }
       this.lastKey = this.sketch.t;
     } 
-    if (keys.s) {
+    if (keys.s || keys.ArrowDown) {
       const movex = Math.round(this.x + this.dirMoveMap.d[0]);
       const movey = Math.round(this.y + this.dirMoveMap.d[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -110,7 +110,7 @@ class SketchInvadersPlayer {
       }
       this.lastKey = this.sketch.t;
     } 
-    if (keys.a) {
+    if (keys.a || keys.ArrowLeft) {
       const movex = Math.round(this.x + this.dirMoveMap.l[0]);
       const movey = Math.round(this.y + this.dirMoveMap.l[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -118,7 +118,7 @@ class SketchInvadersPlayer {
       }
       this.lastKey = this.sketch.t;
     } 
-    if (keys.d) {
+    if (keys.d || keys.ArrowRight) {
       const movex = Math.round(this.x + this.dirMoveMap.r[0]);
       const movey = Math.round(this.y + this.dirMoveMap.r[1]);
       if (this.sketch.board[movey]?.[movex] === ' ') {
@@ -506,6 +506,7 @@ class SceneInvaders extends Scene {
     this.scale = 16;
     this.width = Math.floor(this.canvas.width / this.scale);
     this.height = this.width;
+    app.state.maxStartLevel = Math.max(app.state.maxStartLevel, 2);
   }
 
   load() {
