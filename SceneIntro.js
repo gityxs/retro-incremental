@@ -94,11 +94,11 @@ class SceneIntro extends Scene {
 
 
     if (this.t > 2 && !this.dialog1) {
-      this.showDialog('player', "Hi. I'm Mr. Retro. Today is just a normal day in Retro City. I'm headed off to work.", () => this.dialog1 = true);
+      this.showDialog('player', "嗨。 我是复古先生。 今天只是复古城里平凡的一天。 我要去上班了", () => this.dialog1 = true);
     }
 
     if (this.t > 4 && !this.dialog2) {
-      this.showDialog('invader', "This lifeform seems suitable. Please come with me!", () => this.dialog2 = true);
+      this.showDialog('invader', "这个生命体似乎很合适。 请跟我来！", () => this.dialog2 = true);
     }
 
   }

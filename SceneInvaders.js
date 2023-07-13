@@ -135,13 +135,13 @@ class SketchInvadersPlayer {
         this.eatCount++;
         app.state.score += (this.length + 1) * (p.power ? 100 : 10) * app.state.pValue;
         if (!this.dialog1) {
-          this.sketch.showDialog('player', 'Wow! A pellet! Delicious and valuable!', () => this.dialog1 = true);
+          this.sketch.showDialog('player', '哇！ 一颗颗粒！ 美味又有价值！', () => this.dialog1 = true);
         }
         if (p.power) {
           this.powered = true;
           this.powerEnd = this.sketch.t + 5;
           if (!this.dialog2) {
-            this.sketch.showDialog('player', "Now I can eat the invaders!\nYum!", () => this.dialog2 = true);
+            this.sketch.showDialog('player', "现在我可以吃掉入侵者了！\n好吃！", () => this.dialog2 = true);
           }
         }
         this.tailSize += 0.5;
@@ -166,7 +166,7 @@ class SketchInvadersPlayer {
           this.ghostsEaten++;
 
           if (this.sketch.ghosts.length === 1) {
-            this.sketch.showDialog('invader', "This is not going how I had planned! Let's try something new.", () => this.sketch.nextScene = 'Snake');
+            this.sketch.showDialog('invader', "这不是我计划的那样！ 让我们尝试一些新的东西。", () => this.sketch.nextScene = 'Snake');
           }
         } else {
           if (this.sketch.t > this.invinTimeout) {

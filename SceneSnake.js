@@ -218,7 +218,7 @@ class SketchSnakePlayer {
           this.tailSize += 1;
           this.ghostsEaten++;
           if (this.ghostsEaten >= 40) {
-            this.sketch.showDialog('invader', "This can not be happening! Ok. We're going somewhere you'll never be able to keep up!",
+            this.sketch.showDialog('invader', "这不可能发生！ 好的。 我们要去一个你永远跟不上的地方！",
               () => this.sketch.nextScene = 'PacSnakeInvaders');
           }
         } else {
@@ -257,7 +257,7 @@ class SketchSnakePlayer {
         this.tail.addTail();
       }
       if (!this.dialog1) {
-        this.sketch.showDialog('player', 'Something feels weird! What is happening to me!?', () => {this.dialog1 = true;});
+        this.sketch.showDialog('player', '感觉有些奇怪！ 我是怎么了！？', () => {this.dialog1 = true;});
       }
     }
 

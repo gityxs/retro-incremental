@@ -214,7 +214,7 @@ class Sketch10Player {
           app.state.score += (this.length + 1) * 100 * app.state.pValue;
           this.tailSize += 1;
           if (this.ghostsEaten >= 39) {
-            this.sketch.showDialog('invader', "Ok. Just stop. We need to talk...",
+            this.sketch.showDialog('invader', "好的。 停下来。 我们需要谈谈...",
               () => this.sketch.nextScene = 'Ending');
           }
         } else {
