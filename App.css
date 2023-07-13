@@ -1,0 +1,47 @@
+:root {
+  --bg: hsl(0, 0%, 10%);
+  --fg: white;
+  --fgd: hsl(0, 0%, 30%);
+  --hl: red;
+  --hld: hsl(0, 76%, 22%);
+  --hl2: #47d147;
+  --font: 'VT323', monospace;
+}
+body {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  background: var(--bg);
+  color: var(--fg);
+  text-align: center;
+  font-family: var(--font);
+  font-size: large;
+  letter-spacing: 0.05em;
+}
+canvas {
+  background: white;
+  image-rendering: pixelated;
+}
+button {
+  font-family: var(--font);
+  font-size: large;
+  background: var(--hl);
+  color: var(--hld);
+  border: 1px solid var(--hld);
+  padding: 0.25em;
+  width: 4em;
+}
+button:focus {
+  outline: none;
+}
+button:hover {
+  filter: brightness(1.2);
+}
+button:active {
+  background: var(--hl2);
+}
+#wrapper {
+}
+#header {
+  font-size: 64px;
+}
