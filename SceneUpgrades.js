@@ -3,7 +3,7 @@ class SceneUpgrades extends Scene {
     super(app);
     this.createButton(10, 460, 428, 30, '轮回', () => {this.nextScene = 'Intro'});
     this.app.upgrades.forEach( (u, i) => {
-    this.createButton(10, 230 + i * 35, 40, 30, '购买', () => {this.app.buyUpgrade(i)}, {id: i});
+    this.createButton(10, 230 + i * 35, 40, 30, '买', () => {this.app.buyUpgrade(i)}, {id: i});
     });
   }
 
