@@ -706,7 +706,7 @@ class ScenePacSnakeInvaders extends Scene {
     //draw score
     ctx.fillStyle = 'white';
     ctx.font = '25px VT323';
-    ctx.fillText(`SCORE: ${app.state.score}`, 10, 508);
+    ctx.fillText(`分数: ${app.state.score}`, 10, 508);
 
     //draw hp
     const hp = this.player.hp;

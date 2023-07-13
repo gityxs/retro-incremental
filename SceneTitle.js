@@ -4,8 +4,8 @@ class SceneTitle extends Scene {
     this.scale = 16;
     this.width = Math.floor(this.canvas.width / this.scale);
     this.height = this.width;
-    this.createButton(100, 400, 248, 30, 'START', () => {this.nextScene = 'Intro'});
-    this.createButton(385, 455, 40, 20, 'RESET', () => {app.reset();}, {fontSize: '12px'});
+    this.createButton(100, 400, 248, 30, '开始', () => {this.nextScene = 'Intro'});
+    this.createButton(385, 455, 40, 20, '重置', () => {app.reset();}, {fontSize: '12px'});
   }
 
   load() {
@@ -51,11 +51,11 @@ class SceneTitle extends Scene {
     ctx.font = '36px VT323';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.fillText('Retro Incremental', width * 0.5, 80);
+    ctx.fillText('复古增量', width * 0.5, 80);
 
     ctx.font = '20px VT323';
     ctx.fillStyle = 'hsla(0, 100%, 100%, 0.1)';
-    ctx.fillText('(a love story)', width * 0.5, 110);
+    ctx.fillText('(一个爱情故事))', width * 0.5, 110);
 
     const scale = 4;
     const px = 55;

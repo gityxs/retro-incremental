@@ -1,9 +1,9 @@
 class SceneUpgrades extends Scene {
   constructor(app) {
     super(app);
-    this.createButton(10, 460, 428, 30, 'REINCARNATE', () => {this.nextScene = 'Intro'});
+    this.createButton(10, 460, 428, 30, '轮回', () => {this.nextScene = 'Intro'});
     this.app.upgrades.forEach( (u, i) => {
-    this.createButton(10, 230 + i * 35, 40, 30, 'Buy', () => {this.app.buyUpgrade(i)}, {id: i});
+    this.createButton(10, 230 + i * 35, 40, 30, '购买', () => {this.app.buyUpgrade(i)}, {id: i});
     });
   }
 
@@ -26,14 +26,14 @@ class SceneUpgrades extends Scene {
     ctx.font = '24px VT323';
     ctx.fillStyle = 'white';
 
-    ctx.fillText('Oh No! Mr. Retro died! Luckily,', 10, 30);
-    ctx.fillText('reincarnation is a thing in Retro City.', 10, 60);
-    ctx.fillText('When you return, your progress will be lost', 10, 90);
-    ctx.fillText('but the upgrades you purchase will never die.', 10, 120);
+    ctx.fillText('不好了！ 复古先生死了！ 幸运的是，', 10, 30);
+    ctx.fillText('轮回是复古城里的一件事。', 10, 60);
+    ctx.fillText('当你返回时，你的进度将会丢失', 10, 90);
+    ctx.fillText('但你购买的升级永远不会消失。', 10, 120);
 
 
-    ctx.fillText(`Score: ${app.state.score}`, 10, 180);
-    ctx.fillText('Upgrades:', 10, 210);
+    ctx.fillText(`分数: ${app.state.score}`, 10, 180);
+    ctx.fillText('升级:', 10, 210);
 
     this.app.upgrades.forEach( (u, i) => {
       const upgradeCost = this.app.getUpgradeCost(i);

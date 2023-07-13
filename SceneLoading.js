@@ -16,7 +16,7 @@ class SceneLoading extends Scene {
     ctx.font = '24px VT323';
     ctx.fillStyle = this.t > 1 ? 'white' : 'black';
     //we must use the font or it will never show as loaded
-    ctx.fillText('LOADING.' + '.'.repeat(Math.floor(this.t % 4)) , 100, 100);
+    ctx.fillText('加载中.' + '.'.repeat(Math.floor(this.t % 4)) , 100, 100);
   }
 }
 

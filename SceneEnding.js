@@ -123,7 +123,7 @@ class SceneEnding extends Scene {
       ctx.fillStyle = 'white';
       ctx.font = '30px VT323';
       ctx.textAlign = 'center';
-      ctx.fillText('The End', width * fadeIn / 2, 420);
+      ctx.fillText('终点', width * fadeIn / 2, 420);
 
       const mx = this.lmap(fadeIn, 0, 1, 480, 430);
       const my = 400;
