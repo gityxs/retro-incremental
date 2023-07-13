@@ -15,10 +15,10 @@ class App {
     this.canvas.ontouchstart
 
     this.upgrades = [
-      {text: 'Increase starting level', lvlVar: 'slvl', cost: 5000, costMul: 100, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1, maxVal: 4},
-      {text: 'Increase pellet value', lvlVar: 'pvlvl', cost: 200, costMul: 2, stateVar: 'pValue', upgradeType: '*', upgradeVal: 2},
-      {text: 'Increase power pellet chance', lvlVar: 'pplvl', cost: 200, costMul: 2, stateVar: 'pChance', upgradeType: '*', upgradeVal: 2},
-      {text: 'Increase HP', lvlVar: 'hplvl', cost: 1000, stateVar: 'hp', costMul: 2, upgradeType: '+', upgradeVal: 1}
+      {text: '提高起始等级', lvlVar: 'slvl', cost: 5000, costMul: 100, stateVar: 'startLevel', upgradeType: '+', upgradeVal: 1, maxVal: 4},
+      {text: '提高颗粒价值', lvlVar: 'pvlvl', cost: 200, costMul: 2, stateVar: 'pValue', upgradeType: '*', upgradeVal: 2},
+      {text: '增加能量颗粒几率', lvlVar: 'pplvl', cost: 200, costMul: 2, stateVar: 'pChance', upgradeType: '*', upgradeVal: 2},
+      {text: '提高生命值', lvlVar: 'hplvl', cost: 1000, stateVar: 'hp', costMul: 2, upgradeType: '+', upgradeVal: 1}
     ];
 
     this.loadFromStorage();

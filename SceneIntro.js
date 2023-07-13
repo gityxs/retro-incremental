@@ -94,7 +94,7 @@ class SceneIntro extends Scene {
 
 
     if (this.t > 2 && !this.dialog1) {
-      this.showDialog('player', "嗨。 我是复古先生。 今天只是复古城里平凡的一天。 我要去上班了", () => this.dialog1 = true);
+      this.showDialog('player', "嗨。 我是复古先生。 今天只是复古城里\n平凡的一天。 我要去上班了", () => this.dialog1 = true);
     }
 
     if (this.t > 4 && !this.dialog2) {

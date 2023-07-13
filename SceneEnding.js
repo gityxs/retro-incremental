@@ -7,14 +7,14 @@ class SceneEnding extends Scene {
     this.endStart = undefined;
 
     this.dialogs = [
-      {delay: 1, speaker: 'invader', text: "I can't do this anymore. Why do you keep fighting me?!"},
-      {delay: 1, speaker: 'player', text: "You abducted me and brought me to this place! Why wouldn't I fight you?"},
-      {delay: 2, speaker: 'invader', text: 'You were supposed to LOVE ME!'},
-      {delay: 0.5, speaker: 'player', text: 'WHAT?!'},
-      {delay: 2, speaker: 'invader', text: "I brought you here so I could care for you and let you see how important you are to me. I guess I'll take you home now.\nUnless.."},
-      {delay: 1, speaker: 'player', text: "Wait. I was just afraid. I want to give this a shot."},
-      {delay: 0.5, speaker: 'invader', text: "Really?!"},
-      {delay: 1, speaker: 'player', text: "Really."}
+      {delay: 1, speaker: 'invader', text: "我不能再这样做了。 你为什么一直和我战斗？!"},
+      {delay: 1, speaker: 'player', text: "你绑架了我，把我带到了这个地方！ 我为什么不和你战斗呢？"},
+      {delay: 2, speaker: 'invader', text: '你本来应该爱我的！'},
+      {delay: 0.5, speaker: 'player', text: '纳尼?!'},
+      {delay: 2, speaker: 'invader', text: "我带你来这里是为了照顾你，让你看到你对我来说有多重要。 我想我现在就带你回家。\n除非.."},
+      {delay: 1, speaker: 'player', text: "等等。 我只是害怕。 我想尝试一下。"},
+      {delay: 0.5, speaker: 'invader', text: "真的吗?!"},
+      {delay: 1, speaker: 'player', text: "真的."}
     ];
 
     this.nextDialog = this.dialogs[0].delay;
